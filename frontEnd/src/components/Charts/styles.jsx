@@ -30,7 +30,7 @@ export default function StyledChart() {
               border: 0,
               textAlign: 'center',
               fontWeight: theme.typography.fontWeightBold,
-              backgroundColor: alpha(theme.palette.grey[500], 0.16),
+              backgroundColor: 'alpha(theme.palette.grey[500], 0.16)',
               color: theme.palette.text[theme.palette.mode === 'light' ? 'secondary' : 'primary'],
             },
           },

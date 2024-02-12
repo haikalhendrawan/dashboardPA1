@@ -18,6 +18,7 @@
     "@mui/material": "^5.15.9",
     "apexcharts": "^3.45.2",
     "axios": "^1.6.7",
+    "date-fns": "^3.3.1",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.1",

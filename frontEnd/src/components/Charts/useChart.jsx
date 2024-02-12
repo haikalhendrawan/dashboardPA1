@@ -2,40 +2,40 @@ import merge from 'lodash/merge';
 // @mui
 import { useTheme, alpha } from '@mui/material/styles';
 
-
 // ----------------------------------------------------------------------
 
 export default function useChart(options) {
+  const theme = useTheme();
 
   const LABEL_TOTAL = {
     show: true,
     label: 'Total',
-    color: 'rgb(255, 255, 255)',
-    fontSize: 12,
-    fontWeight: 600,
-    lineHeight: 22 / 14,
+    color: theme.palette.text.secondary,
+    fontSize: theme.typography.subtitle2.fontSize,
+    fontWeight: theme.typography.subtitle2.fontWeight,
+    lineHeight: theme.typography.subtitle2.lineHeight,
   };
 
   const LABEL_VALUE = {
     offsetY: 8,
-    color: 'rgb(255, 255, 255)',
-    fontSize: 12,
-    fontWeight: 700,
-    lineHeight: 1.5,
+    color: theme.palette.text.primary,
+    fontSize: theme.typography.h3.fontSize,
+    fontWeight: theme.typography.h3.fontWeight,
+    lineHeight: theme.typography.h3.lineHeight,
   };
 
   const baseOptions = {
     // Colors
     colors: [
-      '#2065D1',
-      '#FFC107',
-      '#1890FF',
-      '#FF4842',
-      '#54D62C',
-      '#B78103',
-      '#7A4F01',
-      '#0C53B7',
-      '#04297A',
+      theme.palette.primary.main,
+      theme.palette.warning.main,
+      theme.palette.info.main,
+      theme.palette.error.main,
+      theme.palette.success.main,
+      theme.palette.warning.dark,
+      theme.palette.success.darker,
+      theme.palette.info.dark,
+      theme.palette.info.darker,
     ],
 
     // Chart
@@ -43,8 +43,8 @@ export default function useChart(options) {
       toolbar: { show: false },
       zoom: { enabled: false },
       // animations: { enabled: false },
-      foreColor: 'rgba(255, 255, 255, 0.5)',
-      fontFamily:'Public Sans, sans-serif',
+      foreColor: theme.palette.text.disabled,
+      fontFamily: theme.typography.fontFamily,
     },
 
     // States
@@ -88,7 +88,7 @@ export default function useChart(options) {
     // Grid
     grid: {
       strokeDashArray: 3,
-      borderColor: alpha('#919EAB', 0.24),
+      borderColor: theme.palette.divider,
       xaxis: {
         lines: {
           show: false,
@@ -105,7 +105,7 @@ export default function useChart(options) {
     // Markers
     markers: {
       size: 0,
-      strokeColors: '#fff',
+      strokeColors: theme.palette.background.paper,
     },
 
     // Tooltip
@@ -127,7 +127,7 @@ export default function useChart(options) {
       fontWeight: 500,
       itemMargin: { horizontal: 12 },
       labels: {
-        colors: '#D1E9FC',
+        colors: theme.palette.text.primary,
       },
     },
 
@@ -156,7 +156,7 @@ export default function useChart(options) {
       radialBar: {
         track: {
           strokeWidth: '100%',
-          background: alpha('#919EAB', 0.24),
+          background: alpha(theme.palette.grey[500], 0.16),
         },
         dataLabels: {
           value: LABEL_VALUE,
@@ -168,18 +168,18 @@ export default function useChart(options) {
       radar: {
         polygons: {
           fill: { colors: ['transparent'] },
-          strokeColors: alpha('#919EAB', 0.24),
-          connectorColors: alpha('#919EAB', 0.24),
+          strokeColors: theme.palette.divider,
+          connectorColors: theme.palette.divider,
         },
       },
 
       // polarArea
       polarArea: {
         rings: {
-          strokeColor: alpha('#919EAB', 0.24),
+          strokeColor: theme.palette.divider,
         },
         spokes: {
-          connectorColors: alpha('#919EAB', 0.24),
+          connectorColors: theme.palette.divider,
         },
       },
     },
@@ -188,14 +188,14 @@ export default function useChart(options) {
     responsive: [
       {
         // sm
-        breakpoint: 600,
+        breakpoint: theme.breakpoints.values.sm,
         options: {
           plotOptions: { bar: { columnWidth: '40%' } },
         },
       },
       {
         // md
-        breakpoint: 900,
+        breakpoint: theme.breakpoints.values.md,
         options: {
           plotOptions: { bar: { columnWidth: '32%' } },
         },

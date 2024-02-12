@@ -6,9 +6,6 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Iconify from "../../components/Iconify";
 
-const style = {
-  backgroundColor:'white',
-};
 
 export default function AppBar() {
   return (

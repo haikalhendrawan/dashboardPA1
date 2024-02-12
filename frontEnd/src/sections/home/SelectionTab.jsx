@@ -7,7 +7,7 @@ import Iconify from "../../components/Iconify";
 
 
 export default function SelectionTab() { 
-  const [value, setValue] = useState('1');
+  const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
       setValue(newValue);
@@ -17,9 +17,9 @@ export default function SelectionTab() {
     <>
       <Box sx={{ borderBottom: 1, borderColor: 'divider'}}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab label="DIPA" icon={<Iconify icon="mdi:book"/>} sx={{fontSize:12}}/>
-          <Tab label="Belanja" icon={<Iconify icon="mdi:credit-card-multiple" />} sx={{fontSize:12}} />
-          <Tab label="Pendapatan" icon={<Iconify icon="mdi:hand-coin" />} sx={{fontSize:12}}/>
+          <Tab label="Belanja" icon={<Iconify icon="mdi:cash-register" />} sx={{fontSize:12}} />
+          <Tab label="Pendapatan" icon={<Iconify icon="mdi:transfer" />} sx={{fontSize:12}}/>
+          <Tab label="Anggaran" icon={<Iconify icon="mdi:bank-outline"/>} sx={{fontSize:12}}/>
         </Tabs>
       </Box>
     </>
