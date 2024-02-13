@@ -31,7 +31,7 @@ export default function useDIPA() {
         ?null
         :last30Days.push(dateStr)
     });
-    let last30DaysString = last30Days.slice(0, 31);
+    let last30DaysString = last30Days.slice(0, 25);
     return last30DaysString   
   };
 
@@ -39,12 +39,9 @@ export default function useDIPA() {
   function getY30Days(array, row){
     let yAxisData = [];
     array?.map((item) => {
-      const yAxis = row.reduce((acc, curr) => {
-        format(curr.date, "MM/dd/yyyy")===item
-        ?(acc+curr.amount)
-        :(acc+0)
-        return acc
-        })
+      const yAxis = row
+      .filter((curr) => format(curr.date, "MM/dd/yyyy") === item)
+      .reduce((acc, curr) => acc + parseInt(curr.amount), 0);
       
       yAxisData.push(yAxis)
     })
