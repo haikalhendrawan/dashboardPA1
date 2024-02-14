@@ -10,7 +10,17 @@ const getSpending = async() => {
   }
 };
 
-const getSpendingBudget = async() => {
+const getRevenue = async() => {
+  try{
+    const q = "SELECT * FROM real_pendapatan";
+    const [rows] = await pool.execute(q);
+    return rows
+  }catch(err){
+    console.log(err)
+  }
+};
+
+const getBudget = async() => {
   try{
     const q = "SELECT * FROM pagu_belanja";
     const [rows] = await pool.execute(q);
@@ -21,4 +31,4 @@ const getSpendingBudget = async() => {
 };
 
 
-export {getSpending, getSpendingBudget}
+export {getSpending, getRevenue, getBudget}

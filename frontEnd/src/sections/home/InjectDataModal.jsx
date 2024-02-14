@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import axios from "axios";
 // @mui
-import {useTheme,styled} from "@mui/material/styles";
+import {useTheme, styled} from "@mui/material/styles";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import SendIcon from '@mui/icons-material/Send';
 import {Stack, Button, Container, Typography, IconButton, Tabs, Tab, Modal, Box, FormControl, TextField, FormHelperText, 
-  InputAdornment, Paper, InputLabel, Select, MenuItem, Snackbar, Alert, FormControlLabel, Checkbox, filledInputClasses} from '@mui/material';
+  InputAdornment, Paper, InputLabel, Select, MenuItem, Grid} from '@mui/material';
 import Scrollbar from '../../components/Scrollbar';
 
 // --------------------------------------------------------------------------------
@@ -38,13 +39,11 @@ const selectStatus = [
   {jenis:'Pendapatan', value:1, color:'success'},
   {jenis:'Pagu', value:2, color:'success'},
 ];
-
-
 // ---------------------------------------------------------------------------------
 export default function InjectDataModal(props) {
   const theme = useTheme();
 
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState('');
 
   const [isCallingAPI, setIsCallingAPI] = useState(false); // cek apakah sedang query ke database utk mencegah double click add/edit button
 
@@ -52,40 +51,74 @@ export default function InjectDataModal(props) {
     setValue(event.target.value)
   };
 
+  const [isUploaded, setIsUploaded] = useState(false);
+
   return(
       <>
       <Modal open={props.open} onClose={props.close}>
           <Box sx={style}>
             <Scrollbar>
             <Paper sx={{height:'500px', width:'auto', justifyContent:'center'}}>
-              <Stack spacing={2}>
-                <FormControl sx={{  minWidth: 120 }} size="small" required>
-                  <InputLabel id="type" >Jenis Data</InputLabel>
-                    <Select 
-                      required 
-                      name="dataType" 
-                      value={value} 
-                      sx={{ width:'50%', typography:'body2'}} 
-                      label="Jenis Data" onChange={handleChange} 
-                    >
-                      {selectStatus.map((item, index) => {
-                      return(<MenuItem key={index} sx={{typography:'body2', color:theme.palette[item.color].main}} value={item.value}>{item.jenis}</MenuItem>)
-                      })}
-                    </Select>
-                </FormControl>
+              <Grid container>
 
-                <Button
-                  component="label"
-                  role={undefined}
-                  variant="contained"
-                  tabIndex={-1}
-                  startIcon={<CloudUploadIcon />}
-                  sx={{width:'50%'}}
-                >
-                  Upload file
-                  <VisuallyHiddenInput type="file" />
-                </Button>
-              </Stack>
+                <Grid item sx={6} md={6} lg={6}>
+                  <Stack direction='column' spacing={2} margin={1}>
+                    <FormControl sx={{  mt: 2, minWidth: 120 }} size="small">
+                      <InputLabel id="type"sx={{typography:'body2'}}>Jenis Data</InputLabel>
+                        <Select 
+                          required 
+                          name="dataType" 
+                          value={value} 
+                          sx={{typography:'body2'}} 
+                          label="Jenis Data" onChange={handleChange} 
+                        >
+                          {selectStatus.map((item, index) => {
+                          return(
+                            <MenuItem key={index} sx={{typography:'body2'}} value={item.value}>{item.jenis}</MenuItem>)
+                          })}
+                        </Select>
+                    </FormControl>
+                    
+                    <Stack direction='row'>
+                      <IconButton
+                        component="label"
+                        role={undefined}
+                        variant="contained"
+                        tabIndex={-1}
+                        color='primary'
+                        sx={{borderRadius:'50%', width:'20%'}}
+                      >
+                        <CloudUploadIcon />
+                        <VisuallyHiddenInput type="file" />
+                      </IconButton>
+
+                      <TextField variant='standard' disabled>Upload File</TextField>
+                    </Stack>
+                  </Stack>
+                </Grid>
+
+                <Grid item sx={6} md={6} lg={6}>
+                  <Stack direction='column' spacing={2} margin={1}>
+                    <FormControl sx={{  mt: 2, minWidth: 120, display:isUploaded?'block':'none'}} size="small" required>
+                      <TextField 
+                      type='password' 
+                      label='password' 
+                      size='small' 
+                      sx={{typography:'body2'}} 
+                      InputLabelProps={{
+                        sx: {
+                          typography:'body2',
+                        }
+                      }}
+                      required />
+                    </FormControl>
+                    <Button variant='contained' endIcon={<SendIcon />} sx={{display:isUploaded?'block':'none'}}>
+                      Upload File
+                    </Button>
+                  </Stack>
+                </Grid>
+
+              </Grid>
             </Paper>
             
             </Scrollbar>
