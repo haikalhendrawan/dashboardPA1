@@ -1,14 +1,26 @@
-import * as React from 'react';
+import {useState} from 'react';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Iconify from "../../components/Iconify";
+import InjectDataModal from "../../sections/home/InjectDataModal";
 
 
 export default function AppBar() {
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const handleClick = () => {
+    setModalOpen(true);
+  };
+
+  const modalClose = () => {
+    setModalOpen(false);
+  };
+
   return (
+    <>
     <Box sx={{ flexGrow: 1, borderBottom:1, borderColor:'divider'}} >
         <Toolbar>
           <Box sx={{height:40, width:40}}>
@@ -19,11 +31,14 @@ export default function AppBar() {
 
           <Box sx={{ flexGrow:1 }} />
 
-          <Button variant='outlined' color='primary' sx={{borderRadius:'12px'}}>
+          <Button variant='outlined' color='primary' sx={{borderRadius:'12px'}} onClick={handleClick}>
             <Iconify icon="mdi:login" sx={{mr:1}}/>
             Data
           </Button>
         </Toolbar>
     </Box>
+
+    <InjectDataModal open={modalOpen} close={modalClose} />
+    </>
   );
 }

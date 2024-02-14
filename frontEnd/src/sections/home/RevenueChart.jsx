@@ -1,24 +1,37 @@
 import {useState} from "react";
 import ReactApexChart from 'react-apexcharts';
 import { Card, CardHeader, Box, Button } from '@mui/material';
-import {styled} from '@mui/material/styles';
+import {styled, useTheme} from '@mui/material/styles';
 import Chart from '../../components/Charts';
 import { useChart } from '../../components/Charts';
 import Iconify from '../../components/Iconify';
-import DataPeriodPopper from './DataPeriodPopper';
+import DataSelectPopper from './DataSelectPopper';
 
 const CHART_HEIGHT = 372;
 const LEGEND_HEIGHT = 72;
 
 
-export default function WebsiteVisits({ title, subheader, chart, ...other }) {
+export default function RevenueChart({ title, subheader, chart, ...other }) {
   const { labels, colors, series, options } = chart;
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [open, setOpen] = useState(null);
+  const theme = useTheme();
+
   const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+    setOpen(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setOpen(null);
+  };
+
+  const buttonStyle = {
+    color:theme.palette.text.primary,
+    fontWeight:theme.typography.fontWeightMedium,
+    borderRadius:'8px', 
+    backgroundColor:'rgb(244, 246, 248)', 
+    border:'0px'
   };
   
-
   const chartOptions = useChart({
     colors,
     plotOptions: {
@@ -71,7 +84,7 @@ export default function WebsiteVisits({ title, subheader, chart, ...other }) {
           <Button 
             aria-label="settings" 
             variant='outlined'
-            sx={{borderRadius:'8px', backgroundColor:'rgb(244, 246, 248)', border:'0px'}}
+            sx={buttonStyle}
             endIcon={<Iconify icon="mdi:arrow-down-drop" />}
             onClick={handleClick}
             >
@@ -92,7 +105,7 @@ export default function WebsiteVisits({ title, subheader, chart, ...other }) {
       </Box>
     </Card>
 
-    <DataPeriodPopper anchorEl={anchorEl} />
+    <DataSelectPopper open={open} close={handleClose} />
     </>
   );
 }

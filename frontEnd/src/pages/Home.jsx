@@ -3,7 +3,8 @@ import axios from "axios";
 import {Card, Typography, Grid, Container, Stack} from '@mui/material';
 import {styled} from '@mui/material/styles';
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
-import WebsiteVisits from "../sections/home/WebsiteVisit.jsx";
+import SpendingChart from "../sections/home/SpendingChart.jsx";
+import RevenueChart from "../sections/home/RevenueChart.jsx";
 import SelectionTab from "../sections/home/selectionTab.jsx";
 import JsonCard from "../sections/home/jsonCard.jsx";
 import useDIPA from "../sections/home/useDIPA.jsx";
@@ -15,6 +16,7 @@ export default function Home() {
   const [yAxisData, setYAxisData] = useState(null);
   const [subHeadText, setSubHeadText] = useState(null);
   const [disp, setDisp] = useState(0);
+  
 
   useEffect(() => {
     getData();
@@ -41,6 +43,7 @@ export default function Home() {
   };
 
   return(
+    <>
     <Container maxWidth="xl">
 
       <Stack direction="row" alignItems="center" justifyContent="center " mb={5}>
@@ -49,7 +52,7 @@ export default function Home() {
 
       <Grid container spacing={1}>
         <Grid item xs={6} md={6} lg={7} >
-          <WebsiteVisits
+          <SpendingChart
                title="Realisasi Belanja"
                subheader={'Dalam Milyar Rupiah (Rp)'}
                chart={{
@@ -65,7 +68,7 @@ export default function Home() {
                }}
                style={{display:disp===0?"block":"none"}}
             />
-            <WebsiteVisits
+            <RevenueChart
                title="Realisasi Pendapatan"
                subheader={'Dalam Milyar Rupiah (Rp)'}
                chart={{
@@ -83,13 +86,6 @@ export default function Home() {
                     fill: 'gradient',
                     data: yAxisData && yAxisData.map((item) => item*Math.random())
                   },
-                   
-                  //  {
-                  //    name: 'Realisasi',
-                  //    type: 'line',
-                  //    fill: 'solid',
-                  //    data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39, 30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39,],
-                  //  },
                  ],
                }}
                style={{display:disp===1?"block":"none"}}
@@ -100,6 +96,8 @@ export default function Home() {
         </Grid> 
       </Grid>
     </Container>
+
+    </>
   )
 
 
