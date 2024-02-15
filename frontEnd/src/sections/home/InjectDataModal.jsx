@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from "axios";
+import { usePapaParse } from 'react-papaparse';
 // @mui
 import {useTheme, styled} from "@mui/material/styles";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -43,15 +44,33 @@ const selectStatus = [
 export default function InjectDataModal(props) {
   const theme = useTheme();
 
+  const { readString, readRemoteFile } = usePapaParse();
+
   const [value, setValue] = useState('');
 
   const [isCallingAPI, setIsCallingAPI] = useState(false); // cek apakah sedang query ke database utk mencegah double click add/edit button
+
+  const [file, setFile] = useState(null);
 
   const handleChange = (event) => {
     setValue(event.target.value)
   };
 
-  const [isUploaded, setIsUploaded] = useState(false);
+  const handleFileChange = (event) => {
+    setFile(event.target.files);
+    console.log(event.target.files[0])
+  };
+
+  const handleReadString = async() => {
+    const csvString = file[0];
+
+    readRemoteFile(csvString, {
+      complete: async(results) => {
+        console.log(results.data[0])
+      },
+    });
+  };
+
 
   return(
       <>
@@ -60,11 +79,10 @@ export default function InjectDataModal(props) {
             <Scrollbar>
             <Paper sx={{height:'500px', width:'auto', justifyContent:'center'}}>
               <Grid container>
-
                 <Grid item sx={6} md={6} lg={6}>
                   <Stack direction='column' spacing={2} margin={1}>
                     <FormControl sx={{  mt: 2, minWidth: 120 }} size="small">
-                      <InputLabel id="type"sx={{typography:'body2'}}>Jenis Data</InputLabel>
+                      <InputLabel id="type" sx={{typography:'body2'}}>Jenis Data</InputLabel>
                         <Select 
                           required 
                           name="dataType" 
@@ -89,17 +107,23 @@ export default function InjectDataModal(props) {
                         sx={{borderRadius:'50%', width:'20%'}}
                       >
                         <CloudUploadIcon />
-                        <VisuallyHiddenInput type="file" />
+                        <VisuallyHiddenInput type="file" onChange={handleFileChange} />
                       </IconButton>
 
-                      <TextField variant='standard' disabled>Upload File</TextField>
+                      <TextField 
+                        variant='standard' 
+                        value={file && file[0].name} 
+                        inputProps={{sx:{fontSize:10}}}
+                        InputPropsdisabled>
+                        Upload File
+                      </TextField>
                     </Stack>
                   </Stack>
                 </Grid>
 
                 <Grid item sx={6} md={6} lg={6}>
                   <Stack direction='column' spacing={2} margin={1}>
-                    <FormControl sx={{  mt: 2, minWidth: 120, display:isUploaded?'block':'none'}} size="small" required>
+                    <FormControl sx={{  mt: 2, minWidth: 120, display:file?'flex':'none'}} size="small" required>
                       <TextField 
                       type='password' 
                       label='password' 
@@ -112,15 +136,13 @@ export default function InjectDataModal(props) {
                       }}
                       required />
                     </FormControl>
-                    <Button variant='contained' endIcon={<SendIcon />} sx={{display:isUploaded?'block':'none'}}>
+                    <Button variant='contained' onClick={handleReadString} endIcon={<SendIcon />} sx={{display:file?'flex':'none'}}>
                       Upload File
                     </Button>
                   </Stack>
                 </Grid>
-
               </Grid>
             </Paper>
-            
             </Scrollbar>
           </Box>
       </Modal>

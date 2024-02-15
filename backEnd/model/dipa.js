@@ -30,5 +30,15 @@ const getBudget = async() => {
   }
 };
 
+const addBudget = async(data) => {
+  try{
+    const q = "SELECT * FROM pagu_belanja";
+    const [rows] = await pool.execute(q);
+    return rows
+  }catch(err){
+    console.log(err)
+  }
+};
+
 
 export {getSpending, getRevenue, getBudget}
