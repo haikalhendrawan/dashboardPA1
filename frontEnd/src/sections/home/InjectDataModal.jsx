@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from "axios";
 import { usePapaParse } from 'react-papaparse';
 // @mui
@@ -8,6 +8,7 @@ import SendIcon from '@mui/icons-material/Send';
 import {Stack, Button, Container, Typography, IconButton, Tabs, Tab, Modal, Box, FormControl, TextField, FormHelperText, 
   InputAdornment, Paper, InputLabel, Select, MenuItem, Grid} from '@mui/material';
 import Scrollbar from '../../components/Scrollbar';
+import LinearProgressWithLabel from '../../components/LinearProgressWithLabel';
 
 // --------------------------------------------------------------------------------
 const style = {
@@ -52,6 +53,11 @@ export default function InjectDataModal(props) {
 
   const [file, setFile] = useState(null);
 
+  const [loadProg, setLoadProg] = useState(0);
+
+  const intervalRef = useRef(null);
+
+
   const handleChange = (event) => {
     setValue(event.target.value)
   };
@@ -64,12 +70,23 @@ export default function InjectDataModal(props) {
   const handleReadString = async() => {
     const csvString = file[0];
 
+    intervalRef.current = setInterval(() => {
+      setLoadProg((prev) => prev<90?prev+=10:90);
+      console.log('ok')
+    }, 1000);
+
     readRemoteFile(csvString, {
       complete: async(results) => {
         console.log(results.data[0])
       },
     });
   };
+
+  useEffect(() => {
+    loadProg>=90 && clearInterval(intervalRef.current);
+
+  },[loadProg])
+
 
 
   return(
@@ -141,7 +158,10 @@ export default function InjectDataModal(props) {
                     </Button>
                   </Stack>
                 </Grid>
+                
               </Grid>
+
+              <LinearProgressWithLabel tooltip='file upload progress' value={loadProg} />
             </Paper>
             </Scrollbar>
           </Box>
