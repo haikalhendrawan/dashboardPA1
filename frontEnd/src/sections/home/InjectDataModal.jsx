@@ -6,7 +6,7 @@ import {useTheme, styled} from "@mui/material/styles";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import SendIcon from '@mui/icons-material/Send';
 import {Stack, Button, Container, Typography, IconButton, Tabs, Tab, Modal, Box, FormControl, TextField, FormHelperText, 
-  InputAdornment, Paper, InputLabel, Select, MenuItem, Grid} from '@mui/material';
+  InputAdornment, Paper, InputLabel, Select, MenuItem, Grid, tabScrollButtonClasses} from '@mui/material';
 import Scrollbar from '../../components/Scrollbar';
 import LinearProgressWithLabel from '../../components/LinearProgressWithLabel';
 
@@ -45,49 +45,64 @@ const selectStatus = [
 export default function InjectDataModal(props) {
   const theme = useTheme();
 
-  const { readString, readRemoteFile } = usePapaParse();
-
-  const [value, setValue] = useState('');
+  const [selectValue, setSelectValue] = useState('');
 
   const [isCallingAPI, setIsCallingAPI] = useState(false); // cek apakah sedang query ke database utk mencegah double click add/edit button
 
-  const [file, setFile] = useState(null);
+  const [isCorrectfile, setIsCorrectFile] = useState(false);
 
   const [loadProg, setLoadProg] = useState(0);
 
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
   const intervalRef = useRef(null);
 
+  const fileRef = useRef(null);
 
   const handleChange = (event) => {
-    setValue(event.target.value)
+    setSelectValue(event.target.value)
   };
 
   const handleFileChange = (event) => {
+    fileRef.current = event.target.files;
     setFile(event.target.files);
-    console.log(event.target.files[0])
   };
 
-  const handleReadString = async() => {
-    const csvString = file[0];
+  const handleUpload = async() => {
+    try{
+      const formData = new FormData();
+      formData.append("file", file[0], "file2.csv")
+      const response = await axios.post("http://localhost:3015/addAllBudget", formData, {
+        headers:{
+          "Content-Type":"multipart/form-data"
+        }
+      });
 
-    intervalRef.current = setInterval(() => {
-      setLoadProg((prev) => prev<90?prev+=10:90);
-      console.log('ok')
-    }, 1000);
+      if(response.status===200){
+        setLoadProg(0);
+        setFile(null);
+        props.close();
+      }
+    }catch(err){
+      console.log(err)
+    };
 
-    readRemoteFile(csvString, {
-      complete: async(results) => {
-        console.log(results.data[0])
-      },
-    });
+    // readRemoteFile(csvString, {
+    //   complete: async(results) => {
+    //     console.log(results.data[0])
+    //   },
+    // });
   };
+
+  const handleBlur = (event) => {
+    if(event.target.value==="ambo"){return setIsAuthorized(true)};
+    return setIsAuthorized(false);
+  }
 
   useEffect(() => {
     loadProg>=90 && clearInterval(intervalRef.current);
 
   },[loadProg])
-
-
 
   return(
       <>
@@ -103,7 +118,7 @@ export default function InjectDataModal(props) {
                         <Select 
                           required 
                           name="dataType" 
-                          value={value} 
+                          value={selectValue} 
                           sx={{typography:'body2'}} 
                           label="Jenis Data" onChange={handleChange} 
                         >
@@ -151,9 +166,16 @@ export default function InjectDataModal(props) {
                           typography:'body2',
                         }
                       }}
+                      onBlur={handleBlur}
                       required />
                     </FormControl>
-                    <Button variant='contained' onClick={handleReadString} endIcon={<SendIcon />} sx={{display:file?'flex':'none'}}>
+                    <Button 
+                      variant='contained' 
+                      onClick={handleUpload} 
+                      endIcon={<SendIcon />} 
+                      sx={{display:file?'flex':'none'}}
+                      disabled={!isAuthorized || isCallingAPI ? true : false}
+                    >
                       Upload File
                     </Button>
                   </Stack>
@@ -161,23 +183,11 @@ export default function InjectDataModal(props) {
                 
               </Grid>
 
-              <LinearProgressWithLabel tooltip='file upload progress' value={loadProg} />
+              <LinearProgressWithLabel tooltip='file upload progress' value={loadProg} sx={{display:file?'flex':'none'}}/>
             </Paper>
             </Scrollbar>
           </Box>
       </Modal>
-
-      {/*  snackbar untuk show notification di kanan atas  */}
-      {/* <Snackbar open={Boolean(snackbar.open)} autoHideDuration={3000} onClose={handleSnackbarClose} anchorOrigin={{vertical:'top', horizontal:'right'}} >
-        <Alert 
-          onClose={handleSnackbarClose} 
-          variant="filled" 
-          severity={snackbar.color?snackbar.color:'info'} 
-          sx={{ width: '100%'}}
-        >
-          {snackbar?.text}
-        </Alert>
-      </Snackbar> */}
       
       </>
   
