@@ -1,5 +1,7 @@
 import pool from "../config/db.js";
 
+
+// GET REQUEST -------------------------------------------------------------------------
 const getSpending = async() => {
   try{
     const q = "SELECT * FROM real_belanja";
@@ -30,16 +32,68 @@ const getBudget = async() => {
   }
 };
 
-const addBudget = async(data) => {
+// ADD REQUEST ----------------------------------------------------------------------------
+const addSpending = async(filePath) => {
+  const connection = await pool.getConnection();
   try{
-    const [kdsatker, ba, baes1, kanwil, kppn, akun, program, kegiatan, output, kewenangan, sumber_dana, lokasi, budget_type, tanggal, amount] = data
-    console.log(kdsatker, ba, baes1, kanwil, kppn, akun, program, kegiatan, output, kewenangan, sumber_dana, lokasi, budget_type, tanggal, amount)
-    // const q = "SELECT * FROM pagu_belanja";
-    // const [rows] = await pool.execute(q);
+    const q = `LOAD DATA INFILE \'${filePath}\' 
+                INTO TABLE real_belanja 
+                FIELDS TERMINATED BY ','
+                ENCLOSED BY '"'
+                LINES TERMINATED BY '\n'
+                IGNORE 1 LINES` ;
+    const result = await connection.query(q);
+    return result
+  }catch(err){   
+    await connection.rollback();
+    console.log(err);
+    return {err}
+  }finally{
+    connection.release();
+  } 
+};
+
+const addBudget = async(filePath) => {
+  const connection = await pool.getConnection();
+  try{
+    const q = `LOAD DATA INFILE \'${filePath}\' 
+                INTO TABLE pagu_belanja 
+                FIELDS TERMINATED BY ','
+                ENCLOSED BY '"'
+                LINES TERMINATED BY '\n'
+                IGNORE 1 LINES` ;
+    const result = await connection.query(q);
+    return result
+  }catch(err){   
+    await connection.rollback();
+    console.log(err);
+    return {err}
+  }finally{
+    connection.release();
+  } 
+};
+
+
+// DELETE REQUEST ---------------------------------------------------------------------------------
+const deleteSpending = async() => {
+  try{
+    const q = "DELETE FROM real_belanja WHERE kdsatker IS NOT NULL";
+    const result = await pool.execute(q);
+    return result
   }catch(err){
-    console.log(err)
+    return err
+  }
+};
+
+const deleteBudget = async() => {
+  try{
+    const q = "DELETE FROM pagu_belanja WHERE kdsatker IS NOT NULL";
+    const result = await pool.execute(q);
+    return result
+  }catch(err){
+    return err
   }
 };
 
 
-export {getSpending, getRevenue, getBudget, addBudget}
+export {getSpending, getRevenue, getBudget, addSpending, addBudget, deleteSpending, deleteBudget}

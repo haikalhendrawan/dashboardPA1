@@ -1,27 +1,18 @@
-import { getSpending, getBudget, getRevenue, addBudget } from "../model/dipa.js";
+import { getSpending, getBudget, getRevenue, 
+          addSpending, addBudget, 
+          deleteSpending, deleteBudget } from "../model/dipa.js";
 import Papa from "papaparse";
-import multer from "multer";
 import fs from "fs";
+import multer from "multer";
+import upload from "../config/multer.js";
 
-const storage= multer.diskStorage(
-  { 
-    destination:(req, file, callback) => {
-      callback(null, './uploads')
-    },
-    filename:(req, file, callback) => {
-      callback(null, file.originalname)
-    }
-  });
-
-const upload = multer({storage:storage}).single('file');
-
-
+// GET REQUEST -------------------------------------------------------------------------
 const getAllSpending = async(req, res) => {
   try{
     const data = await getSpending();
     return res.status(200).json(data)
   }catch(err){
-    return res.status(500).json({isError:true, msg:'Internal server error'})
+    return res.status(500).json({isError:true, msg:'Internal server error', err})
   }
 };
 
@@ -30,7 +21,7 @@ const getAllRevenue = async(req, res) => {
     const data = await getRevenue();
     return res.status(200).json(data)
   }catch(err){
-    return res.status(500).json({isError:true, msg:'Internal server error'})
+    return res.status(500).json({isError:true, msg:'Internal server error', err})
   }
 };
 
@@ -39,26 +30,45 @@ const getAllBudget = async(req, res) => {
     const data = await getBudget();
     return res.status(200).json({data})
   }catch(err){
-    return res.status(500).json({isError:true, msg:'Internal server error'})
+    return res.status(500).json({isError:true, msg:'Internal server error', err})
   }
+};
+
+
+// ADD REQUEST ----------------------------------------------------------------------------
+const addAllSpending = async(req, res) => {
+  upload(req, res, async(err) => {
+    if(err instanceof multer.MulterError){
+      return res.status(500).json({isError:true, msg:'fail to upload file'})}
+
+    try{
+      await deleteSpending();
+      await addSpending(`C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/${req.file.filename}`);
+      return res.status(200).json({msg:'Data inserted to database'});
+    }catch(err){
+      return res.status(500).json({isError:true, msg:'Fail to insert data',err});
+    }
+  })
 };
 
 const addAllBudget = async(req, res) => {
   upload(req, res, async(err) => {
     if(err instanceof multer.MulterError){
-      return console.log(err)}
+      return res.status(500).json({isError:true, msg:'fail to upload file'})}
 
-    const file = req.file;
-
-    const csv = fs.readFileSync(`./uploads/${req.file.filename}`, 'utf8');
-
-    const json = Papa.parse(csv);
-
-    await addBudget(json.data[1]);
-    
-    return res.status(200).json({msg:'Data inserted successfully'});
+    try{
+      await deleteBudget();
+      await addBudget(`C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/${req.file.filename}`);
+      return res.status(200).json({msg:'Data inserted to database'});
+    }catch(err){
+      return res.status(500).json({isError:true, msg:'Fail to insert data',err});
+    }
   })
 };
 
 
-export {getAllSpending, getAllRevenue, getAllBudget, addAllBudget}
+
+
+
+
+export {getAllSpending, getAllRevenue, getAllBudget, addAllSpending, addAllBudget}

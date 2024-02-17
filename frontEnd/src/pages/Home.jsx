@@ -38,9 +38,9 @@ export default function Home() {
   },[data]);
 
   const handleTabChange = (value) => {
-    setDisp(value)
-
+    setDisp(value);
   };
+
 
   return(
     <>
@@ -56,7 +56,7 @@ export default function Home() {
                title="Realisasi Belanja"
                subheader={'Dalam Milyar Rupiah (Rp)'}
                chart={{
-                 labels: xAxisData && xAxisData,
+                 labels: xAxisData,
                  series: [
                    {
                      name: 'Realisasi Belanja (Rp)',

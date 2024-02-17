@@ -2,13 +2,16 @@ import { useState, useEffect, useRef } from 'react';
 import axios from "axios";
 import { usePapaParse } from 'react-papaparse';
 // @mui
-import {useTheme, styled} from "@mui/material/styles";
+import { useTheme, styled } from "@mui/material/styles";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import SendIcon from '@mui/icons-material/Send';
 import {Stack, Button, Container, Typography, IconButton, Tabs, Tab, Modal, Box, FormControl, TextField, FormHelperText, 
   InputAdornment, Paper, InputLabel, Select, MenuItem, Grid, tabScrollButtonClasses} from '@mui/material';
 import Scrollbar from '../../components/Scrollbar';
 import LinearProgressWithLabel from '../../components/LinearProgressWithLabel';
+import { sanitizeFile } from '../../utility/sanitizeFile';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import useDIPA from "./useDIPA";
 
 // --------------------------------------------------------------------------------
 const style = {
@@ -45,7 +48,9 @@ const selectStatus = [
 export default function InjectDataModal(props) {
   const theme = useTheme();
 
-  const [selectValue, setSelectValue] = useState('');
+  const [selectValue, setSelectValue] = useState(0);
+
+  const {data, getData, getLast30Days, getY30Days} = useDIPA();
 
   const [isCallingAPI, setIsCallingAPI] = useState(false); // cek apakah sedang query ke database utk mencegah double click add/edit button
 
@@ -57,57 +62,75 @@ export default function InjectDataModal(props) {
 
   const intervalRef = useRef(null);
 
-  const fileRef = useRef(null);
+  const [file, setFile] = useState(null);
 
-  const handleChange = (event) => {
-    setSelectValue(event.target.value)
+  const handleChange = async(event) => {
+    setSelectValue(event.target.value);
+    const bool = await sanitizeFile(file[0], event.target.value);
+    setIsCorrectFile(bool);
   };
 
-  const handleFileChange = (event) => {
-    fileRef.current = event.target.files;
+  const handleFileChange = async(event) => {
     setFile(event.target.files);
+    const bool = await sanitizeFile(event.target.files[0], selectValue);
+    setIsCorrectFile(bool);
   };
 
   const handleUpload = async() => {
     try{
+      setIsCallingAPI(true);
       const formData = new FormData();
-      formData.append("file", file[0], "file2.csv")
-      const response = await axios.post("http://localhost:3015/addAllBudget", formData, {
+      const date = new Date().getTime();
+      const url = selectValue===0?`${import.meta.env.VITE_API_URL}/addAllSpending`:`${import.meta.env.VITE_API_URL}/addAllBudget`;
+      const fileName = selectValue===0?`${date}_belanja.csv`:`${date}_pagu.csv`;
+      formData.append("file", file[0], fileName);
+      const response = await axios.post(url, formData, {
         headers:{
           "Content-Type":"multipart/form-data"
         }
       });
 
       if(response.status===200){
-        setLoadProg(0);
-        setFile(null);
-        props.close();
+        setLoadProg(100);
+        console.log(response.data);
       }
     }catch(err){
-      console.log(err)
-    };
-
-    // readRemoteFile(csvString, {
-    //   complete: async(results) => {
-    //     console.log(results.data[0])
-    //   },
-    // });
+      console.log(err);
+      setIsCallingAPI(false);
+    }finally{
+      setIsCallingAPI(false);
+    }
   };
 
   const handleBlur = (event) => {
     if(event.target.value==="ambo"){return setIsAuthorized(true)};
     return setIsAuthorized(false);
-  }
+  };
+
+  async function reset (){
+    setFile(null);
+    setIsCallingAPI(false);
+    setIsCorrectFile(false);
+    setIsAuthorized(false);
+    setLoadProg(0);
+  };
 
   useEffect(() => {
-    loadProg>=90 && clearInterval(intervalRef.current);
+    loadProg===100 && setTimeout(async () => {
+      reset();
+      await props.close();
+      window.location.reload();
+    },1000)
 
   },[loadProg])
 
   return(
       <>
-      <Modal open={props.open} onClose={props.close}>
+      <Modal open={props.open}>
           <Box sx={style}>
+            <IconButton style={{ position: 'absolute', top: 5, right: 5, zIndex: 1 }} onClick={() => { props.close(); reset(); }}>
+              <HighlightOffIcon />
+            </IconButton>
             <Scrollbar>
             <Paper sx={{height:'500px', width:'auto', justifyContent:'center'}}>
               <Grid container>
@@ -144,7 +167,7 @@ export default function InjectDataModal(props) {
 
                       <TextField 
                         variant='standard' 
-                        value={file && file[0].name} 
+                        value={file?file[0].name:''} 
                         inputProps={{sx:{fontSize:10}}}
                         InputPropsdisabled>
                         Upload File
@@ -155,7 +178,7 @@ export default function InjectDataModal(props) {
 
                 <Grid item sx={6} md={6} lg={6}>
                   <Stack direction='column' spacing={2} margin={1}>
-                    <FormControl sx={{  mt: 2, minWidth: 120, display:file?'flex':'none'}} size="small" required>
+                    <FormControl sx={{  mt: 2, minWidth: 120, display:isCorrectfile?'flex':'none'}} size="small" required>
                       <TextField 
                       type='password' 
                       label='password' 
@@ -173,7 +196,7 @@ export default function InjectDataModal(props) {
                       variant='contained' 
                       onClick={handleUpload} 
                       endIcon={<SendIcon />} 
-                      sx={{display:file?'flex':'none'}}
+                      sx={{display:isCorrectfile?'flex':'none'}}
                       disabled={!isAuthorized || isCallingAPI ? true : false}
                     >
                       Upload File
@@ -183,7 +206,7 @@ export default function InjectDataModal(props) {
                 
               </Grid>
 
-              <LinearProgressWithLabel tooltip='file upload progress' value={loadProg} sx={{display:file?'flex':'none'}}/>
+              <LinearProgressWithLabel tooltip='file upload progress' value={loadProg} sx={{display:isCorrectfile?'flex':'none'}} />
             </Paper>
             </Scrollbar>
           </Box>
