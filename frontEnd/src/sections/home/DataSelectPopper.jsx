@@ -41,13 +41,13 @@ export default function DataSelectPopper(props) {
             <Paper sx={style}>
               <ClickAwayListener onClickAway={props.close}>
               <Box>
-                <StyledButton sx={period===0 && {fontWeight:theme.typography.fontWeightMedium, backgroundColor:'rgb(244, 246, 248)'}}>
+                <StyledButton sx={period===0 && {fontWeight:theme.typography.fontWeightMedium, backgroundColor:theme.palette.background.paper}}>
                   Last 30 Days
                 </StyledButton>
-                <StyledButton sx={period===1 && {fontWeight:theme.typography.fontWeightMedium, backgroundColor:'rgb(244, 246, 248)'}}>
+                <StyledButton sx={period===1 && {fontWeight:theme.typography.fontWeightMedium, backgroundColor:theme.palette.background.paper}}>
                   Current Month
                 </StyledButton>
-                <StyledButton sx={period===2 && {fontWeight:theme.typography.fontWeightMedium, backgroundColor:'rgb(244, 246, 248)'}}>
+                <StyledButton sx={period===2 && {fontWeight:theme.typography.fontWeightMedium, backgroundColor:theme.palette.background.paper}}>
                  All Year
                 </StyledButton>
               </Box>

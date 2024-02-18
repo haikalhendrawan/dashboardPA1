@@ -6,6 +6,7 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Iconify from "../../components/Iconify";
 import InjectDataModal from "../../sections/home/InjectDataModal";
+import ThemeSwitcher from './themeSwitcher';
 
 
 export default function AppBar() {
@@ -31,6 +32,7 @@ export default function AppBar() {
 
           <Box sx={{ flexGrow:1 }} />
 
+          <ThemeSwitcher />
           <Button variant='outlined' color='primary' sx={{borderRadius:'12px'}} onClick={handleClick}>
             <Iconify icon="mdi:login" sx={{mr:1}}/>
             Data

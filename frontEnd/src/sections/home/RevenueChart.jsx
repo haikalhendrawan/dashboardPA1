@@ -28,7 +28,7 @@ export default function RevenueChart({ title, subheader, chart, ...other }) {
     color:theme.palette.text.primary,
     fontWeight:theme.typography.fontWeightMedium,
     borderRadius:'8px', 
-    backgroundColor:'rgb(244, 246, 248)', 
+    backgroundColor: theme.palette.background.neutral, 
     border:'0px'
   };
   

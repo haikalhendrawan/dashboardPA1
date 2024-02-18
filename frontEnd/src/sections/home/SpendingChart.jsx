@@ -14,7 +14,7 @@ const StyledButton = styled(Button)(({theme}) => ({
   color: theme.palette.text.primary,
   fontWeight: theme.typography.fontWeightMedium,
   borderRadius:'8px', 
-  backgroundColor:'rgb(244, 246, 248)', 
+  backgroundColor:theme.palette.background.neutral, 
   border:'0px',
   '&:hover': {
     outline:0,
@@ -36,20 +36,8 @@ export default function SpendingChart({ title, subheader, chart, ...other }) {
     setOpen(null);
   };
 
-  const buttonStyle = {
-    color:theme.palette.text.primary,
-    fontWeight:theme.typography.fontWeightMedium,
-    borderRadius:'8px', 
-    backgroundColor:'rgb(244, 246, 248)', 
-    border:'0px',
-    '&:hover': {
-      backgroundColor: '#fff',
-      color: '#3c52b2',
-  },
-  };
   
   const chartOptions = useChart({
-    colors,
     plotOptions: {
       bar: {
         columnWidth: '16%',
