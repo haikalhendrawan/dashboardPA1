@@ -8,6 +8,7 @@ import RevenueChart from "../sections/home/RevenueChart.jsx";
 import SelectionTab from "../sections/home/selectionTab.jsx";
 import JsonCard from "../sections/home/jsonCard.jsx";
 import NumbersCard from "../sections/home/NumbersCard.jsx";
+import NumberPerUnit from "../sections/home/NumberPerUnitChart.jsx";
 import SpendingTypeCard from "../sections/home/SpendingTypeCard.jsx";
 import useDIPA from "../sections/home/useDIPA.jsx";
 import { sub } from "date-fns";
@@ -75,9 +76,9 @@ export default function Home() {
         </Grid>
         <Grid item xs={6} sm={6} md={2}>
           <NumbersCard 
-            header={`Persentase Realisasi`}
+            header={`Persentase `}
             number={`32%`}
-            footer={`dari total pagu`}
+            footer={`Terealisasi`}
             icon={`mdi:chart-timeline-variant-shimmer`}
             iconColor={theme.palette.primary.main}
           />
@@ -94,7 +95,7 @@ export default function Home() {
 
         <Grid item xs={12} sm={6} md={8}>
           <SpendingChart
-               title="Realisasi Belanja"
+               title="Tren Realisasi Belanja"
                subheader={'Dalam Milyar Rupiah (Rp)'}
                chart={{
                  labels: xAxisData,
@@ -130,6 +131,47 @@ export default function Home() {
                  ],
                }}
                style={{display:disp===1?"block":"none"}}
+            />
+        </Grid>
+        <Grid item xs={12} sm={6} md={4}>
+          <JsonCard />
+        </Grid> 
+
+        <Grid item xs={12} sm={6} md={4}>
+        <NumberPerUnit
+              title="Realisasi Per BA"
+              subheader="(+43%) than last year"
+              chartData={[
+                { label: 'United Kingdom', value: 1380 },
+                { label: 'United States', value: 1200 },
+                { label: 'Netherlands', value: 1100 },
+                { label: 'South Korea', value: 690 },
+                { label: 'Germany', value: 580 },
+                { label: 'France', value: 540 },
+                { label: 'Canada', value: 470 },
+                { label: 'China', value: 448 },
+                { label: 'Japan', value: 430 },
+                { label: 'Italy', value: 400 },
+              ]}
+            />
+        </Grid> 
+        <Grid item xs={12} sm={6} md={4}>
+        <NumberPerUnit
+              title="Realisasi Per Satker"
+              subheader="(+43%) than last year"
+              chartData={[
+                { label: 'United Kingdom', value: 1380 },
+                { label: 'United States', value: 1200 },
+                { label: 'Netherlands', value: 1100 },
+                { label: 'South Korea', value: 690 },
+                { label: 'Germany', value: 580 },
+                { label: 'France', value: 540 },
+                { label: 'Canada', value: 470 },
+                { label: 'China', value: 448 },
+                { label: 'Japan', value: 430 },
+                { label: 'Italy', value: 400 },
+              ]}
+              colors={theme.palette.warning.main}
             />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
