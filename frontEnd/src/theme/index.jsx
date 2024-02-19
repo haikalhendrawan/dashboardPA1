@@ -1,9 +1,6 @@
 import { useMemo, useState, createContext, useEffect } from 'react';
 import {ThemeProvider as MuiThemeProvider, createTheme} from "@mui/material/styles";
-
-
 import typography from './typography';
-import Card from "./override/Card"
 import ComponentsOverrides from './override';
 import customShadows from './customShadows';
 import GlobalStyles from './globalStyles';

@@ -17,9 +17,8 @@ export default function SelectionTab({tab, setTab}) {
     <>
       <Box sx={{ borderBottom: 1, borderColor: 'divider'}}>
         <Tabs value={tab} onChange={handleChange} aria-label="basic tabs example">
-          <Tab label="Belanja" value={0} icon={<Iconify icon="mdi:cash-register" />} sx={{fontSize:12}} />
-          <Tab label="Pendapatan" value={1} icon={<Iconify icon="mdi:transfer" />} sx={{fontSize:12}}/>
-          <Tab label="Anggaran" value={2} icon={<Iconify icon="mdi:bank-outline"/>} sx={{fontSize:12}}/>
+          <Tab label="2024" value={0} icon={<Iconify icon="mdi:cash-register" />} sx={{fontSize:12}} />
+          <Tab label="2023" value={1} icon={<Iconify icon="mdi:transfer" />} sx={{fontSize:12}}/>
         </Tabs>
       </Box>
     </>

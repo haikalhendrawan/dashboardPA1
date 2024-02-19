@@ -22,7 +22,6 @@ const StyledButton = styled(Button)(({theme}) => ({
   }
 }));
 
-
 export default function SpendingChart({ title, subheader, chart, ...other }) {
   const { labels, colors, series, options } = chart;
   const [open, setOpen] = useState(null);
@@ -104,7 +103,7 @@ export default function SpendingChart({ title, subheader, chart, ...other }) {
           series={series}
           options={chartOptions}
           width="100%"
-          height={364}
+          height={320}
         />
       </Box>
     </Card>

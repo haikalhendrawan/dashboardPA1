@@ -41,8 +41,8 @@ const VisuallyHiddenInput = styled('input')({
 
 const selectStatus = [
   {jenis:'Belanja', value:0, color:'error'},
-  {jenis:'Pendapatan', value:1, color:'success'},
-  {jenis:'Pagu', value:2, color:'success'},
+  {jenis:'Pagu', value:1, color:'success'},
+  // {jenis:'Pendapatan', value:2, color:'success'},
 ];
 // ---------------------------------------------------------------------------------
 export default function InjectDataModal(props) {
@@ -79,10 +79,15 @@ export default function InjectDataModal(props) {
   const handleUpload = async() => {
     try{
       setIsCallingAPI(true);
+      setLoadProg(90);
       const formData = new FormData();
       const date = new Date().getTime();
-      const url = selectValue===0?`${import.meta.env.VITE_API_URL}/addAllSpending`:`${import.meta.env.VITE_API_URL}/addAllBudget`;
-      const fileName = selectValue===0?`${date}_belanja.csv`:`${date}_pagu.csv`;
+      const url = selectValue===0
+                  ?`${import.meta.env.VITE_API_URL}/addAllSpending`
+                  :`${import.meta.env.VITE_API_URL}/addAllBudget`;
+      const fileName = selectValue===0
+                        ?`${date}_belanja.csv`
+                        :`${date}_pagu.csv`;
       formData.append("file", file[0], fileName);
       const response = await axios.post(url, formData, {
         headers:{
@@ -120,7 +125,7 @@ export default function InjectDataModal(props) {
       reset();
       await props.close();
       window.location.reload();
-    },1000)
+    },0)
 
   },[loadProg])
 

@@ -16,10 +16,6 @@ async function sanitizeFile(file, option) {
             else{resolve(false)}
             break;
           case 1 :
-            if(fileLength===15 && fileExt==="csv"){resolve(true)}
-            else{resolve(false)}
-            break;
-          case 2 :
             if(fileLength===14 && fileExt==="csv"){resolve(true)}
             else{resolve(false)}
             break;
