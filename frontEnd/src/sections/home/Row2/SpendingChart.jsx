@@ -2,10 +2,10 @@ import {useState} from "react";
 import ReactApexChart from 'react-apexcharts';
 import { Card, CardHeader, Box, Button} from '@mui/material';
 import {styled, useTheme} from '@mui/material/styles';
-import Chart from '../../components/Charts';
-import { useChart } from '../../components/Charts';
-import Iconify from '../../components/Iconify';
-import DataSelectPopper from './DataSelectPopper';
+import Chart from '../../../components/Charts';
+import { useChart } from '../../../components/Charts';
+import Iconify from '../../../components/Iconify';
+import DataSelectPopper from '../DataSelectPopper';
 
 const CHART_HEIGHT = 372;
 const LEGEND_HEIGHT = 72;
@@ -103,7 +103,7 @@ export default function SpendingChart({ title, subheader, chart, ...other }) {
           series={series}
           options={chartOptions}
           width="100%"
-          height={320}
+          height={300}
         />
       </Box>
     </Card>

@@ -11,7 +11,7 @@ import Scrollbar from '../../components/Scrollbar';
 import LinearProgressWithLabel from '../../components/LinearProgressWithLabel';
 import { sanitizeFile } from '../../utility/sanitizeFile';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
-import useDIPA from "./useDIPA";
+import useDIPA from "../../sections/home/useDIPA";
 
 // --------------------------------------------------------------------------------
 const style = {

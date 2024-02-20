@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Iconify from "../../components/Iconify";
-import InjectDataModal from "../../sections/home/InjectDataModal";
+import InjectDataModal from "./InjectDataModal";
 import ThemeSwitcher from './themeSwitcher';
 
 
