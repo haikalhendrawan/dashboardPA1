@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import {Card, Typography, Grid, Box, Tabs, Tab, CardContent, Stack} from '@mui/material';
 import {styled, useTheme} from '@mui/material/styles';
 import Chart from '../../../components/Charts';
@@ -8,8 +8,47 @@ import Iconify from "../../../components/Iconify";
 import RadialChart from "./RadialChart";
 // -----------------------------------------------
 
-export default function SpendingPerAccount(props){
+export default function SpendingPerAccount({spendingData, budgetData}){
   const theme = useTheme();
+  const [value, setValue] = useState({
+    akun51:0,
+    akun52:0,
+    akun53:0,
+    akunOther:0
+  });
+
+  useEffect(() => {
+    async function renderText(){
+      const akun51Realised = spendingData? await getRealization('51', spendingData): null;
+      const akun51Budget   = budgetData? await getRealization('51', budgetData): null;
+      const akun52Realised = spendingData? await getRealization('52', spendingData): null;
+      const akun52Budget   = budgetData? await getRealization('52', budgetData): null;
+      const akun53Realised = spendingData? await getRealization('53', spendingData): null;
+      const akun53Budget   = budgetData? await getRealization('53', budgetData): null;
+      const otherAkunRealised = spendingData? await getOtherRealization(spendingData): null;
+      const otherAkunBudget= budgetData? await getOtherRealization(budgetData): null;
+
+      const percent51 = (akun51Realised/akun51Budget*100).toFixed(1);
+      const percent52 = (akun52Realised/akun52Budget*100).toFixed(1);
+      const percent53 = (akun53Realised/akun53Budget*100).toFixed(1);
+      const percentOther = (otherAkunRealised/otherAkunBudget*100).toFixed(1)
+
+      console.log(otherAkunRealised)
+      console.log(otherAkunBudget)
+      console.log(percentOther)
+
+      setValue({
+        akun51:percent51,
+        akun52:percent52,
+        akun53:percent53,
+        akunOther:percentOther
+      })
+    }
+
+    renderText();
+
+  }, [spendingData, budgetData])
+
   return(
     <Card>
       <CardContent sx={{mb:-2}}>
@@ -21,7 +60,7 @@ export default function SpendingPerAccount(props){
                 labels:[''] ,
                 colors:theme.palette.primary.main, 
                 toColor:theme.palette.primary.light, 
-                series:['74']
+                series:[value.akun51]
                 }} 
               />
           </Grid>
@@ -32,7 +71,7 @@ export default function SpendingPerAccount(props){
                 labels:[''] ,
                 colors:theme.palette.warning.main,
                 toColor:theme.palette.warning.light,  
-                series:['33']
+                series:[value.akun52]
                 }} 
               />
           </Grid>
@@ -43,7 +82,7 @@ export default function SpendingPerAccount(props){
                 labels:['25,2 M'],
                 colors:theme.palette.primary.main,
                 toColor:theme.palette.primary.light,  
-                series:[45]
+                series:[value.akun53]
                 }} 
               />
           </Grid>
@@ -54,7 +93,7 @@ export default function SpendingPerAccount(props){
                 labels:[''] ,
                 colors:theme.palette.warning.main,
                 toColor:theme.palette.warning.light,  
-                series:['61']
+                series:[value.akunOther]
                 }} 
               />
           </Grid>
@@ -63,3 +102,29 @@ export default function SpendingPerAccount(props){
     </Card>
   )
 }
+
+
+async function getRealization(account, data){
+  const filter = data?.filter((item) => {
+    return item.akun.slice(0,2)===account
+  });
+  const sum = filter.reduce((a, c) => {
+    return a + parseInt(c.amount)
+  }, 0);
+
+  return sum
+};
+
+async function getOtherRealization(data){
+  const filter = data?.filter((item) => {
+    const account = parseInt(item.akun.slice(0,2));
+    return account>53 && account<60
+  });
+  const sum = filter.reduce((a, c) => {
+    return a + parseInt(c.amount)
+  }, 0);
+  console.log(filter)
+  console.log(sum)
+
+  return sum
+};

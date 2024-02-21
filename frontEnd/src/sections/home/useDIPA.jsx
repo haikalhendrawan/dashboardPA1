@@ -11,8 +11,8 @@ import {format} from "date-fns";
       amount: string                                    amount: string
       ba: string                                        ba: string
       baes1: string                                     baes1: string
-      budget_type: string                               budget_type: string
-      date: date                                        date: date
+      budget_type: string - bilangan 1 digit            budget_type: string - bilangan 1 digit
+      date: date                                        
       kanwil: string                                    kanwil: string
       kdsatker: string                                  kdsatker: string
       kegiatan: string                                  kegiatan: string
@@ -22,7 +22,7 @@ import {format} from "date-fns";
       output: string                                    output: string
       program: string                                   program: string
       sumber_dana: string                               sumber_dana: string
-      tanggal: string                                   tanggal: string
+      tanggal: string                                  
     }                                                  }
   ]                                                   ]
 */
