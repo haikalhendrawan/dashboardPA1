@@ -1,17 +1,55 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, createContext, useContext, memo, useMemo} from "react";
 import axios from "axios";
 import {format} from "date-fns";
+//-----------------------------------------
 
-export default function useDIPA() {
-  const [data, setData] = useState(null);
+/*
+  @Spending data model                               @Budget data model
+  [                                                  [
+    {                                                 {
+      akun: string                                      akun: string                                   
+      amount: string                                    amount: string
+      ba: string                                        ba: string
+      baes1: string                                     baes1: string
+      budget_type: string                               budget_type: string
+      date: date                                        date: date
+      kanwil: string                                    kanwil: string
+      kdsatker: string                                  kdsatker: string
+      kegiatan: string                                  kegiatan: string
+      kewenangan: string                                kewenangan: string
+      kppn: string                                      kppn: string
+      lokasi: string                                    lokasi: string
+      output: string                                    output: string
+      program: string                                   program: string
+      sumber_dana: string                               sumber_dana: string
+      tanggal: string                                   tanggal: string
+    }                                                  }
+  ]                                                   ]
+*/
+
+const DipaContext = createContext({});
+
+const DipaProvider = memo(({children}) => {
+  const [spending, setSpending] = useState(null);
+  const [budget, setBudget] = useState(null);
 
   // return seluruh row yang udah di sort descending, format tanggal Datetime {MM-DD-YYYY HH:MM:SS}
-  async function getData(){
+  async function getSpendingData(){
     const result = await axios.get("http://localhost:3015/getAllSpending");
-    setData(parseAndSortDate(result.data));
+    setSpending(parseAndSortDate(result.data));
+  };
+  async function getBudgetData(){
+    const result = await axios.get("http://localhost:3015/getAllBudget");
+    setBudget(result.data);
   };
 
-  function parseAndSortDate(row){
+
+  useEffect(() => {
+    getSpendingData();
+    getBudgetData();
+  }, [])
+
+  function parseAndSortDate (row){
     const allDate = row?.map((item) => {
       const [day, month, year] = item.tanggal.split("/");
       const date = new Date(year, month-1, day);
@@ -49,6 +87,17 @@ export default function useDIPA() {
     return yAxisData
   };
 
-  return {data, getData, getLast30Days, getY30Days}
 
-}
+  return(
+    <DipaContext.Provider value={{spending, getSpendingData, budget, getBudgetData, getLast30Days, getY30Days}}>
+      {children}
+    </DipaContext.Provider>
+  )
+})
+
+export default function useDIPA() {
+  return useContext(DipaContext)
+};
+
+
+export {DipaProvider}

@@ -28,7 +28,7 @@ const getAllRevenue = async(req, res) => {
 const getAllBudget = async(req, res) => {
   try{
     const data = await getBudget();
-    return res.status(200).json({data})
+    return res.status(200).json(data)
   }catch(err){
     return res.status(500).json({isError:true, msg:'Internal server error', err})
   }
