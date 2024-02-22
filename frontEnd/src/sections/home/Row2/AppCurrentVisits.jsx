@@ -46,7 +46,7 @@ const allValue = ['Anggaran', 'Realisasi']
 
 // ----------------------------------------------------------------------
 
-export default function AppCurrentVisits({ title, subheader, chartColors, chartData, ...other }) {
+export default function AppCurrentVisits({ title, subheader, chartColors, chartData, proportion, changeProportion,...other }) {
   const theme = useTheme();
   const [open, setOpen] = useState(null);
   const [value, setValue] = useState(0); //popper value
@@ -94,8 +94,7 @@ export default function AppCurrentVisits({ title, subheader, chartColors, chartD
   };
 
   const handleChange = (newValue) => {
-    setValue(newValue);
-    console.log(newValue)
+    changeProportion(newValue);
   };
 
 
@@ -114,7 +113,7 @@ export default function AppCurrentVisits({ title, subheader, chartColors, chartD
             onClick={handleClick}
 
             >
-            {allValue[value]}
+            {allValue[proportion]}
           </StyledButton>
         }
         />
@@ -124,7 +123,7 @@ export default function AppCurrentVisits({ title, subheader, chartColors, chartD
       </StyledChartWrapper>
     </Card>
 
-    <ProportionPopper open={open} close={handleClose}  value={value} changeValue={handleChange}/>
+    <ProportionPopper open={open} close={handleClose}  value={proportion} changeValue={handleChange}/>
     </>
   );
 }

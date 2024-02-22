@@ -3,6 +3,9 @@ import {styled, alpha, useTheme} from "@mui/material/styles";
 import {Popover, Button, Box, Popper, Paper, Fade, ClickAwayListener, Typography} from "@mui/material";
 import Iconify from '../../../components/Iconify';
 
+
+// -----------------------------------------------------
+
 const style = {
   boxShadow:"0px 5px 5px -3px rgba(145, 158, 171, 0.2), 0px 8px 10px 1px rgba(145, 158, 171, 0.14), 0px 3px 14px 2px rgba(145, 158, 171, 0.12)",
   p: 1,
@@ -22,14 +25,17 @@ const StyledButton = styled(Button)(({theme}) => ({
   justifyContent:'flex-start'
 }))
 
+// ------------------------------------------------------
+
 export default function ProportionPopper(props) { 
   const theme = useTheme();
-  const [period, setPeriod] = useState(0);
+  const value = props.value;
 
   const handleClick = (event) => {
     props.changeValue(event.target.value)
   };
 
+  const selectedSx= {fontWeight:theme.typography.fontWeightMedium, backgroundColor:theme.palette.background.neutral}
 
   //
   return(
@@ -44,10 +50,16 @@ export default function ProportionPopper(props) {
             <Paper sx={style}>
               <ClickAwayListener onClickAway={props.close}>
               <Box>
-                <StyledButton value={0} onClick={(e) => handleClick(e)} sx={period===0 && {fontWeight:theme.typography.fontWeightMedium, backgroundColor:theme.palette.background.paper}}>
+                <StyledButton 
+                  value={0} 
+                  onClick={(e) => handleClick(e)} 
+                  sx={value==0 && selectedSx}>
                   Anggaran
                 </StyledButton>
-                <StyledButton value={1} onClick={(e) => handleClick(e)} sx={period===1 && {fontWeight:theme.typography.fontWeightMedium, backgroundColor:theme.palette.background.paper}}>
+                <StyledButton 
+                  value={1} 
+                  onClick={(e) => handleClick(e)} 
+                  sx={value==1 && selectedSx}>
                   Realisasi
                 </StyledButton>
               </Box>

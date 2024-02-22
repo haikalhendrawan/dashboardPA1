@@ -6,9 +6,7 @@ import Chart from '../../../components/Charts';
 import { useChart } from '../../../components/Charts';
 import Iconify from '../../../components/Iconify';
 import DataSelectPopper from './DataSelectPopper';
-
-const CHART_HEIGHT = 372;
-const LEGEND_HEIGHT = 72;
+// ---------------------------------------------------------------------------
 
 const StyledButton = styled(Button)(({theme}) => ({
   color: theme.palette.text.primary,
@@ -22,10 +20,14 @@ const StyledButton = styled(Button)(({theme}) => ({
   }
 }));
 
+const allValue = ['30 Days', 'Current Month', "All Year"];
+// ---------------------------------------------------------------------------
+
 export default function SpendingChart({ title, subheader, chart, ...other }) {
   const { labels, colors, series, options } = chart;
   const [open, setOpen] = useState(null);
   const theme = useTheme();
+  const [value, setValue] = useState(0); //popper value
 
   const handleClick = (event) => {
     setOpen(event.currentTarget);
@@ -33,6 +35,10 @@ export default function SpendingChart({ title, subheader, chart, ...other }) {
 
   const handleClose = () => {
     setOpen(null);
+  };
+
+  const handleChange = (newValue) => {
+    setValue(newValue);
   };
 
   
@@ -91,7 +97,7 @@ export default function SpendingChart({ title, subheader, chart, ...other }) {
             disableFocusRipple
             onClick={handleClick}
             >
-            30 Day
+            {allValue[value]}
           </StyledButton>
         }
       />
@@ -108,7 +114,7 @@ export default function SpendingChart({ title, subheader, chart, ...other }) {
       </Box>
     </Card>
 
-    <DataSelectPopper open={open} close={handleClose} />
+    <DataSelectPopper open={open} close={handleClose} value={value} changeValue={handleChange}/>
     </>
   );
 }

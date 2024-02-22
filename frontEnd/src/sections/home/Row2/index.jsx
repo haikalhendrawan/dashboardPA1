@@ -24,9 +24,20 @@ export default function Row2(props){
     amount53:30,
     amountOther:40,
   });
+  const [trendOption, setTrendOption] = useState(0);
+  const [proportionOption, setProportionOption] = useState(0);
 
   const xLabel = useMemo(() => (spending ? getLast30Days(spending) : null), [spending]);
   const yValue = useMemo(() => (spending ? getY30Days(xLabel, spending) : null), [spending, xLabel]);
+
+  const handleChangeTrend = (event) => {
+    setTrendOption(event.target.value)
+  };
+
+  const handleChangeProportion = (newValue) => {
+    setProportionOption(newValue);
+    console.log(newValue)
+  };
 
   useEffect(() => {
     async function render(){
@@ -38,11 +49,6 @@ export default function Row2(props){
       const akun53Budget   = budget? await getRealization('53', budget): null;
       const otherAkunRealised = spending? await getOtherRealization(spending): null;
       const otherAkunBudget= budget? await getOtherRealization(budget): null;
-
-      console.log(value.amount51)
-      console.log(value.amount52)
-      console.log(value.amount53)
-      console.log(value.amountOther)
 
       setValue({
         akun51:akun51Budget,
@@ -77,18 +83,19 @@ export default function Row2(props){
                    },
                  ],
                }}
-              //  style={{display:props.disp===0?"block":"none"}}
+               popperValue={trendOption}
+               changeTrend={handleChangeTrend}
             />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <AppCurrentVisits
               title="Proporsi Belanja"
-              subheader={'Dalam Anggaran'}
+              subheader={`Dari Total ${proportionOption==0?'Anggaran':'Realisasi'}`}
               chartData={[
-                { label: 'Belanja Pegawai (51)', value: parseInt(value.amount51) },
-                { label: 'Belanja Barang (52)', value: parseInt(value.amount52) },
-                { label: 'Belanja Modal (53)', value: parseInt(value.amount53) },
-                { label: 'Lainnya (54-57)', value: parseInt(value.amountOther) },
+                { label: 'Belanja Pegawai (51)', value: proportionOption==1?parseInt(value.amount51):parseInt(value.akun51)},
+                { label: 'Belanja Barang (52)', value: proportionOption==1?parseInt(value.amount52):parseInt(value.akun52)},
+                { label: 'Belanja Modal (53)', value: proportionOption==1?parseInt(value.amount53):parseInt(value.akun53)},
+                { label: 'Lainnya (54-57)', value: proportionOption==1?parseInt(value.amountOther):parseInt(value.akunOther)},
               ]}
               chartColors={[
                 theme.palette.primary.main,
@@ -96,6 +103,8 @@ export default function Row2(props){
                 theme.palette.success.dark,
                 theme.palette.error.dark,
               ]}
+              proportion={proportionOption}
+              changeProportion={handleChangeProportion}
             />
         </Grid> 
     </>

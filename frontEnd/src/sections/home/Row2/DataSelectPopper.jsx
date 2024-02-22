@@ -24,12 +24,14 @@ const StyledButton = styled(Button)(({theme}) => ({
 
 export default function DataSelectPopper(props) { 
   const theme = useTheme();
-  const [period, setPeriod] = useState(0);
+  const value = props.value;
 
   const handleClick = (event) => {
     props.changeValue(event.target.value)
     console.log(event.target.value)
   };
+
+  const selectedSx= {fontWeight:theme.typography.fontWeightMedium, backgroundColor:theme.palette.background.neutral}
 
   //
   return(
@@ -44,13 +46,13 @@ export default function DataSelectPopper(props) {
             <Paper sx={style}>
               <ClickAwayListener onClickAway={props.close}>
               <Box>
-                <StyledButton value={0} onClick={(e) => handleClick(e)} sx={period===0 && {fontWeight:theme.typography.fontWeightMedium, backgroundColor:theme.palette.background.paper}}>
+                <StyledButton value={0} onClick={(e) => handleClick(e)} sx={value==0 && selectedSx}>
                   Last 30 Days
                 </StyledButton>
-                <StyledButton value={1} onClick={(e) => handleClick(e)} sx={period===1 && {fontWeight:theme.typography.fontWeightMedium, backgroundColor:theme.palette.background.paper}}>
+                <StyledButton value={1} onClick={(e) => handleClick(e)} sx={value==1 && selectedSx}>
                   Current Month
                 </StyledButton>
-                <StyledButton value={2} onClick={(e) => handleClick(e)}sx={period===2 && {fontWeight:theme.typography.fontWeightMedium, backgroundColor:theme.palette.background.paper}}>
+                <StyledButton value={2} onClick={(e) => handleClick(e)}sx={value==2 && selectedSx}>
                  All Year
                 </StyledButton>
               </Box>
