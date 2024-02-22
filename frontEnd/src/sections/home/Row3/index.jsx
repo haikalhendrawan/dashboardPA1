@@ -2,10 +2,6 @@ import {useState} from "react";
 import ReactApexChart from 'react-apexcharts';
 import { Card, CardHeader, Box, Button, Grid} from '@mui/material';
 import {styled, useTheme} from '@mui/material/styles';
-import Chart from '../../../components/Charts';
-import { useChart } from '../../../components/Charts';
-import Iconify from '../../../components/Iconify';
-import DataSelectPopper from '../DataSelectPopper';
 import NumberPerUnit from "./NumberPerUnitChart";
 import JsonCard from "../JsonCard";
 

@@ -5,6 +5,7 @@ import StyledChart from './components/Charts/styles.jsx';
 import Router from './route.jsx';
 import ThemeProvider from './theme/index.jsx';
 import { DipaProvider } from "./sections/home/useDIPA.jsx";
+import { LoadingProvider } from './hooks/useLoading.jsx'
 
 
 function App() {
@@ -13,10 +14,12 @@ function App() {
     <>
     <ThemeProvider>
       <CssBaseline />
-      <BrowserRouter>
-        <StyledChart />
-          <Router />
-      </BrowserRouter>
+      <LoadingProvider>
+        <BrowserRouter>
+          <StyledChart />
+            <Router />
+        </BrowserRouter>
+      </LoadingProvider>
     </ThemeProvider>
     </>
   )

@@ -14,7 +14,11 @@ export default function SpendingPerAccount({spendingData, budgetData}){
     akun51:0,
     akun52:0,
     akun53:0,
-    akunOther:0
+    akunOther:0,
+    amount51:``,
+    amount52:'',
+    amount53:'',
+    amountOther:'',
   });
 
   useEffect(() => {
@@ -33,15 +37,21 @@ export default function SpendingPerAccount({spendingData, budgetData}){
       const percent53 = (akun53Realised/akun53Budget*100).toFixed(1);
       const percentOther = (otherAkunRealised/otherAkunBudget*100).toFixed(1)
 
-      console.log(otherAkunRealised)
-      console.log(otherAkunBudget)
-      console.log(percentOther)
+      const number51 = await formatToMilyar(akun51Realised);
+      const number52 = await formatToMilyar(akun52Realised);
+      const number53 = await formatToMilyar(akun53Realised);
+      const numberOther = await formatToMilyar(otherAkunRealised);
+
 
       setValue({
         akun51:percent51,
         akun52:percent52,
         akun53:percent53,
-        akunOther:percentOther
+        akunOther:percentOther,
+        amount51:number51,
+        amount52:number52,
+        amount53:number53,
+        amountOther:numberOther
       })
     }
 
@@ -57,7 +67,7 @@ export default function SpendingPerAccount({spendingData, budgetData}){
             <Typography variant="subtitle2" >Belanja Pegawai (51)</Typography>
             <RadialChart 
               chart={{
-                labels:[''] ,
+                labels:[value.amount51],
                 colors:theme.palette.primary.main, 
                 toColor:theme.palette.primary.light, 
                 series:[value.akun51]
@@ -68,7 +78,7 @@ export default function SpendingPerAccount({spendingData, budgetData}){
             <Typography variant="subtitle2" >Belanja Barang (52)</Typography>
             <RadialChart 
               chart={{
-                labels:[''] ,
+                labels:[value.amount52] ,
                 colors:theme.palette.warning.main,
                 toColor:theme.palette.warning.light,  
                 series:[value.akun52]
@@ -79,7 +89,7 @@ export default function SpendingPerAccount({spendingData, budgetData}){
             <Typography variant="subtitle2" >Belanja Modal (53)</Typography>
             <RadialChart 
               chart={{
-                labels:['25,2 M'],
+                labels:[value.amount53],
                 colors:theme.palette.primary.main,
                 toColor:theme.palette.primary.light,  
                 series:[value.akun53]
@@ -90,7 +100,7 @@ export default function SpendingPerAccount({spendingData, budgetData}){
             <Typography variant="subtitle2" >Lainnya (54-57)</Typography>
             <RadialChart 
               chart={{
-                labels:[''] ,
+                labels:[value.amountOther] ,
                 colors:theme.palette.warning.main,
                 toColor:theme.palette.warning.light,  
                 series:[value.akunOther]
@@ -123,8 +133,13 @@ async function getOtherRealization(data){
   const sum = filter.reduce((a, c) => {
     return a + parseInt(c.amount)
   }, 0);
-  console.log(filter)
-  console.log(sum)
 
   return sum
+};
+
+async function formatToMilyar(number){
+  const output = `${(number/1000000000).toFixed(1)} M`;
+  const adjDecimal = output.replace(".", ",");
+
+  return adjDecimal
 };

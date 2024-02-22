@@ -5,7 +5,7 @@ import {styled, useTheme} from '@mui/material/styles';
 import Chart from '../../../components/Charts';
 import { useChart } from '../../../components/Charts';
 import Iconify from '../../../components/Iconify';
-import DataSelectPopper from '../DataSelectPopper';
+import DataSelectPopper from './DataSelectPopper';
 
 const CHART_HEIGHT = 372;
 const LEGEND_HEIGHT = 72;

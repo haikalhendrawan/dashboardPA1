@@ -2,24 +2,32 @@ import {useState} from "react";
 import ReactApexChart from 'react-apexcharts';
 import { Card, CardHeader, Box, Button} from '@mui/material';
 import {styled, useTheme, alpha} from '@mui/material/styles';
+import debounce from "lodash.debounce"
 import Chart from '../../../components/Charts';
 import { useChart } from '../../../components/Charts';
 import Iconify from '../../../components/Iconify';
-import DataSelectPopper from '../DataSelectPopper';
 
 export default function RadialChart(props) {
   const { labels, colors, series, toColor} = props.chart;
   const theme = useTheme();
-  const [isHover, setIsHover] = useState(true);
-
+  const [isHover, setIsHover] = useState(false);
 
   const LABEL_VALUE = {
     show: true,
     offsetY: -8,
-    formatter: (val) => isHover?`${val}%`:labels,
+    formatter: (val) => `${val} %`,
     color: theme.palette.text.primary,
     fontSize: theme.typography.h5.fontSize,
     fontWeight: theme.typography.h5.fontWeight,
+    lineHeight: theme.typography.h5.lineHeight,
+  };
+  const LABEL_VALUE2 = {
+    show: true,
+    offsetY: -8,
+    formatter: (val) => labels,
+    color: theme.palette.text.primary,
+    fontSize: theme.typography.h6.fontSize,
+    fontWeight: theme.typography.h6.fontWeight,
     lineHeight: theme.typography.h5.lineHeight,
   };
 
@@ -27,6 +35,7 @@ export default function RadialChart(props) {
   const chartOptions = {
     labels:' ',
     chart: {
+      id: `basic-bar${Math.random()}`,
       toolbar: { show: false },
       zoom: { enabled: false },
       // animations: { enabled: false },
@@ -62,10 +71,10 @@ export default function RadialChart(props) {
     },
     grid: {
       padding: {
-        top: -15,
+        top: -20,
         right: -20,
         bottom: -20,
-        left: -15,
+        left: -20,
       }
     },
     legend: {
@@ -92,16 +101,28 @@ export default function RadialChart(props) {
     ],
   };
 
+  const delayedSetHover = debounce((value) => setIsHover(value), 200);
+
   return (
     <>
-      <Box sx={{ p: 3, pb: 1 }}>
+      <Box sx={{ p: 3, pb: 1, mt:-2 }} onMouseEnter={() => delayedSetHover(true)} onMouseLeave={() => delayedSetHover(false)}>
         <Chart
           dir="ltr"
           type="radialBar"
           series={series}
           options={chartOptions}
           width="100%"
-          height="50%"
+          height="60%"
+          style={{display:isHover?'none':'block', pointerEvents: isHover ? 'none' : 'auto' }}
+        />
+        <Chart
+          dir="ltr"
+          type="radialBar"
+          series={series}
+          options={{...chartOptions, plotOptions:{radialBar:{dataLabels:{value:LABEL_VALUE2}}}}}
+          width="100%"
+          height="60%"
+          style={{display:isHover?'block':'none', pointerEvents: isHover ? 'none' : 'auto' }}
         />
       </Box>
     </>

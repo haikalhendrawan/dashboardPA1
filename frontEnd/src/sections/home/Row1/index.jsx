@@ -1,18 +1,15 @@
 import {useState, useEffect} from "react";
 import ReactApexChart from 'react-apexcharts';
-import { Card, CardHeader, Box, Button, Grid} from '@mui/material';
-import {styled, useTheme} from '@mui/material/styles';
+import { Card, CardHeader, Box, Button, Grid, Backdrop} from '@mui/material';
+import {styled, useTheme, alpha} from '@mui/material/styles';
+import CircularProgress from '@mui/material/CircularProgress';
 import useDIPA from "../useDIPA";
-import Chart from '../../../components/Charts';
-import { useChart } from '../../../components/Charts';
-import Iconify from '../../../components/Iconify';
-import DataSelectPopper from '../DataSelectPopper';
 import NumbersCard from "./NumbersCard";
 import SpendingPerAccount from "./SpendingPerAccount";
 
-
 export default function Row1(){
   const theme = useTheme();
+  const [open, setOpen] = useState(true); //backdrop
   const {spending, budget} = useDIPA();
   const [totalBudget, setTotalBudget] = useState();
   const [totalSpending, setTotalSpending] = useState();
@@ -20,6 +17,9 @@ export default function Row1(){
   const [dateText, setDateText] = useState();
   const [yearText, setYearText] = useState();
 
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   useEffect(() => {
     async function setTheData(){
@@ -40,12 +40,34 @@ export default function Row1(){
       const year = new Date().getFullYear();
       setYearText(year)
     }
-    setTheData()
+
+    let timeoutId;
+
+    async function waitTime(){
+      spending
+      ?timeoutId = setTimeout(() => {
+        setOpen(false)
+      }, 500)
+      :null
+    }
+
+    setTheData();
+    waitTime();
+
+    return(() => {clearTimeout(timeoutId)})
+
   }, [spending, budget]);
 
 
   return(
     <>
+        <Backdrop
+          sx={{ color: '#f7f9fc', zIndex:9999, backgroundColor: alpha(theme.palette.grey[300], 0.8)}}
+          open={open}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+
        <Grid item xs={6} sm={6} md={2}>
           <NumbersCard 
             header={`Anggaran Belanja`}
@@ -68,7 +90,7 @@ export default function Row1(){
           <NumbersCard 
             header={`Persentase Realisasi `}
             number={percentRlsd}
-            footer={`dari pagu`}
+            footer={`dari anggaran`}
             icon={`mdi:chart-timeline`}
             iconColor={theme.palette.primary.dark}
           />
@@ -118,4 +140,6 @@ async function getToday(){
 
   return text
 }
+
+
 
