@@ -3,9 +3,8 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import "dotenv/config";
-
-
 import dipaRoute from "./routes/dipaRoute.js"
+import referenceRoute from "./routes/referenceRoute.js"
 
 
 //---------------------------------------------------------
@@ -21,6 +20,7 @@ app.use(cors({
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(dipaRoute);
+app.use(referenceRoute);
 
 
 app.get("/", (req, res) => {

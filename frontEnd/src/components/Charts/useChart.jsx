@@ -104,7 +104,7 @@ export default function useChart(options) {
 
     // Markers
     markers: {
-      size: 0,
+      size: 5,
       strokeColors: theme.palette.background.paper,
     },
 

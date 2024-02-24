@@ -20,10 +20,10 @@ const StyledButton = styled(Button)(({theme}) => ({
   }
 }));
 
-const allValue = ['30 Days', 'Current Month', "All Year"];
+const allValue = ['30 Day', 'This Month', "All Year"];
 // ---------------------------------------------------------------------------
 
-export default function SpendingChart({ title, subheader, chart, ...other }) {
+export default function SpendingChart({ title, subheader, chart, trend, changeTrend, ...other }) {
   const { labels, colors, series, options } = chart;
   const [open, setOpen] = useState(null);
   const theme = useTheme();
@@ -38,11 +38,12 @@ export default function SpendingChart({ title, subheader, chart, ...other }) {
   };
 
   const handleChange = (newValue) => {
-    setValue(newValue);
+    changeTrend(newValue);
   };
 
   
   const chartOptions = useChart({
+    chart: {id: `bar${Math.random()}`},
     plotOptions: {
       bar: {
         columnWidth: '16%',
@@ -54,6 +55,13 @@ export default function SpendingChart({ title, subheader, chart, ...other }) {
     labels,
     xaxis: {
       type: 'datetime',
+      labels: {
+        formatter: function (value) {
+           const formatter = new Intl.DateTimeFormat('en-US', { day: '2-digit', month: 'short' });
+           const formattedDate = formatter.format(value);
+           return formattedDate 
+           }, 
+      }
     },
     yaxis:{
       labels: {
@@ -97,7 +105,7 @@ export default function SpendingChart({ title, subheader, chart, ...other }) {
             disableFocusRipple
             onClick={handleClick}
             >
-            {allValue[value]}
+            {allValue[trend]}
           </StyledButton>
         }
       />
@@ -114,7 +122,7 @@ export default function SpendingChart({ title, subheader, chart, ...other }) {
       </Box>
     </Card>
 
-    <DataSelectPopper open={open} close={handleClose} value={value} changeValue={handleChange}/>
+    <DataSelectPopper open={open} close={handleClose} value={trend} changeValue={handleChange}/>
     </>
   );
 }

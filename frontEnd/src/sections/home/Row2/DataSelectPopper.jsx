@@ -47,10 +47,10 @@ export default function DataSelectPopper(props) {
               <ClickAwayListener onClickAway={props.close}>
               <Box>
                 <StyledButton value={0} onClick={(e) => handleClick(e)} sx={value==0 && selectedSx}>
-                  Last 30 Days
+                  Last 30 Day
                 </StyledButton>
                 <StyledButton value={1} onClick={(e) => handleClick(e)} sx={value==1 && selectedSx}>
-                  Current Month
+                  This Month
                 </StyledButton>
                 <StyledButton value={2} onClick={(e) => handleClick(e)}sx={value==2 && selectedSx}>
                  All Year

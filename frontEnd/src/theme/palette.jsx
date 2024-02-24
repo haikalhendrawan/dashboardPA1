@@ -106,6 +106,7 @@ const palette = {
   warning: WARNING,
   error: ERROR,
   grey: GREY,
+  purple: PURPLE,
   divider: alpha(GREY[500], 0.24),
   text: {
     primary: GREY[800],
@@ -139,6 +140,7 @@ const paletteDark = {
   warning: WARNING,
   error: ERROR,
   grey: GREY,
+  purple: PURPLE,
   divider: alpha(GREY[500], 0.24),
   text: {
     primary: 'rgb(255, 255, 255)',

@@ -4,7 +4,12 @@ import pool from "../config/db.js";
 // GET REQUEST -------------------------------------------------------------------------
 const getSpending = async() => {
   try{
-    const q = "SELECT * FROM real_belanja";
+    const q = `SELECT real_belanja.*, ref_satker.nmsatker, ref_ba.uraianba
+                FROM real_belanja
+                LEFT JOIN ref_satker
+                ON real_belanja.kdsatker = ref_satker.kdsatker
+                LEFT JOIN ref_ba
+                ON real_belanja.ba = ref_ba.ba`
     const [rows] = await pool.execute(q);
     return rows
   }catch(err){
@@ -24,7 +29,12 @@ const getRevenue = async() => {
 
 const getBudget = async() => {
   try{
-    const q = "SELECT * FROM pagu_belanja";
+    const q = `SELECT pagu_belanja.*, ref_satker.nmsatker, ref_ba.uraianba
+                FROM pagu_belanja
+                LEFT JOIN ref_satker
+                ON pagu_belanja.kdsatker = ref_satker.kdsatker
+                LEFT JOIN ref_ba
+                ON pagu_belanja.ba = ref_ba.ba`;
     const [rows] = await pool.execute(q);
     return rows
   }catch(err){

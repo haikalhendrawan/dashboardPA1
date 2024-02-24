@@ -46,10 +46,9 @@ const allValue = ['Anggaran', 'Realisasi']
 
 // ----------------------------------------------------------------------
 
-export default function AppCurrentVisits({ title, subheader, chartColors, chartData, proportion, changeProportion,...other }) {
+export default function SpendingProportion({ title, subheader, chartColors, chartData, proportion, changeProportion,...other }) {
   const theme = useTheme();
   const [open, setOpen] = useState(null);
-  const [value, setValue] = useState(0); //popper value
 
   const chartLabels = chartData.map((i) => i.label);
 

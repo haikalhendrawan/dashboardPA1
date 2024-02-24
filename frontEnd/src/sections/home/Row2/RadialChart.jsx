@@ -23,16 +23,8 @@ const StyledButton = styled(Button)(({theme}) => ({
 
 export default function RadialChart({ title, subheader, chart, ...other }) {
   const { labels, colors, series, options } = chart;
-  // const [open, setOpen] = useState(null);
+
   const theme = useTheme();
-
-  // const handleClick = (event) => {
-  //   setOpen(event.currentTarget);
-  // };
-
-  // const handleClose = () => {
-  //   setOpen(null);
-  // };
 
   
   const chartOptions = useChart({

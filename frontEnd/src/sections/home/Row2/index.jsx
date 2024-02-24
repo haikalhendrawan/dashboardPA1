@@ -7,13 +7,14 @@ import Chart from '../../../components/Charts';
 import { useChart } from '../../../components/Charts';
 import Iconify from '../../../components/Iconify';
 import SpendingChart from "./SpendingChart";
-import AppCurrentVisits from "./AppCurrentVisits";
-//----------------------------------------------------------------
+import SpendingProportion from "./SpendingProportion";
+import { format } from "date-fns";
+// ----------------------------------------------------------------
 
-
+// -----------------------------------------------------------------
 export default function Row2(props){
   const theme = useTheme();
-  const {spending, budget, getLast30Days, getY30Days} = useDIPA();
+  const {spending, budget} = useDIPA();
   const [value, setValue] = useState({
     akun51:0,
     akun52:0,
@@ -24,19 +25,27 @@ export default function Row2(props){
     amount53:30,
     amountOther:40,
   });
+  const [xLabel, setXLabel] = useState({
+    xDays30:[],
+    xMonth:[],
+    xYear:[],
+  });
+  const [yLabel, setYLabel] = useState({
+    yDays30:[],
+    yMonth:[],
+    yYear:[],
+  });
   const [trendOption, setTrendOption] = useState(0);
   const [proportionOption, setProportionOption] = useState(0);
 
-  const xLabel = useMemo(() => (spending ? getLast30Days(spending) : null), [spending]);
-  const yValue = useMemo(() => (spending ? getY30Days(xLabel, spending) : null), [spending, xLabel]);
-
-  const handleChangeTrend = (event) => {
-    setTrendOption(event.target.value)
+  const handleChangeTrend = (newValue) => {
+    setTrendOption(newValue);
+    setXLabel(trendValue.xMonth);
+    setYLabel(trendValue.yMonth);
   };
 
   const handleChangeProportion = (newValue) => {
     setProportionOption(newValue);
-    console.log(newValue)
   };
 
   useEffect(() => {
@@ -59,36 +68,65 @@ export default function Row2(props){
         amount52:akun52Realised,
         amount53:akun53Realised,
         amountOther:otherAkunRealised
-      })
+      });
+
+      const today = new Date();
+
+      // get last 30 day data
+      const todayMin30 = new Date(new Date().setDate(today.getDate()-29));
+      const endDate = today; 
+      const ranged30day = spending?await getRangedData(spending, todayMin30, endDate):[];
+      const x = spending?await getXLabel(ranged30day):[];
+      const y = x?await getYLabel(ranged30day, x):[];
+
+      // get last month data
+      const firstDateCurrMonth = today.setDate(1);
+      const lastDateCurrMonth = (new Date(today.getFullYear(), today.getMonth()+1, 1) - 1);
+      const rangedMonth = spending?await getRangedData(spending, firstDateCurrMonth, lastDateCurrMonth):[];
+      const x2 = spending?await getXLabel(rangedMonth):[]
+      const y2 = x2?await getYLabel(rangedMonth, x2):[];
+
+      // get all year data
+      const firstDateCurrYear = new Date(today.getFullYear(), 0, 1);
+      const lastDateCurrYear= new Date(today.getFullYear(), 11, 31);
+      const rangedYear = spending?await getRangedData(spending, firstDateCurrYear, lastDateCurrYear):[];
+
+      const x3 = spending?await getXLabel(rangedYear):[];
+      const y3 = x3?await getYLabel(rangedYear, x3):[];
+
+      setXLabel({xDays30:x, xMonth:x2, xYear:x3,});
+      setYLabel({yDays30:y, yMonth:y2, yYear:y3,});
     }
 
     render();
-
   }, [spending, budget])
+
 
   return(
     <>
+
         <Grid item xs={12} sm={6} md={8}>
           <SpendingChart
+               key={trendOption}
                title="Tren Realisasi Belanja"
                subheader={'Dalam Rupiah (Rp)'}
                chart={{
-                 labels: xLabel && xLabel,
+                 labels: Object.values(xLabel)[trendOption],
                  series: [
                    {
                      name: 'Realisasi Belanja (Rp)',
                      type: 'area',
                      fill: 'gradient',
-                     data: yValue && yValue,
+                     data: Object.values(yLabel)[trendOption],
                    },
                  ],
                }}
-               popperValue={trendOption}
+               trend={trendOption}
                changeTrend={handleChangeTrend}
             />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
-          <AppCurrentVisits
+          <SpendingProportion
               title="Proporsi Belanja"
               subheader={`Dari Total ${proportionOption==0?'Anggaran':'Realisasi'}`}
               chartData={[
@@ -100,7 +138,7 @@ export default function Row2(props){
               chartColors={[
                 theme.palette.primary.main,
                 theme.palette.warning.main,
-                theme.palette.success.dark,
+                theme.palette.purple.main,
                 theme.palette.error.dark,
               ]}
               proportion={proportionOption}
@@ -111,6 +149,7 @@ export default function Row2(props){
   )
 }
 
+// ------------------------------------------------------------------------------------------
 
 async function getRealization(account, data){
   const filter = data?.filter((item) => {
@@ -134,3 +173,50 @@ async function getOtherRealization(data){
 
   return sum
 };
+
+
+// get data dalam range tanggal tertentu
+async function getRangedData(data, startDate, endDate){
+
+  if(!data){return false}
+
+  const today = new Date();
+  const currentMonth = today.getMonth();
+  const currentYear = today.getFullYear();
+
+  const rangedArray = data.filter((item) => {
+    const itemDate = item.date;
+    return itemDate>=startDate && itemDate<=endDate
+  })
+
+  return rangedArray
+}
+
+async function getXLabel(data){
+
+  if(!data){return false}
+
+  let array = [];
+
+  data.map((item) => {
+    const dateString = format(item.date, "MM/dd/yyyy");
+    if (array.includes(dateString) === false){array.push(dateString)}
+  });
+
+  return array
+}
+
+async function getYLabel(data, xLabel){
+  if(!data){return false}
+
+  let array = [];
+
+  xLabel.map((item) => {
+    const total = data.reduce((a, c) => {
+      return format(c.date, "MM/dd/yyyy") === item ? (a + parseInt(c.amount)) : a;
+    }, 0)
+    array.push(total)
+  });
+
+  return array
+}

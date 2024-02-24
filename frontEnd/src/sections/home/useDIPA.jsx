@@ -22,7 +22,9 @@ import {format} from "date-fns";
       output: string                                    output: string
       program: string                                   program: string
       sumber_dana: string                               sumber_dana: string
-      tanggal: string                                  
+      tanggal: string                                   nmsatker:string
+      nmsatker:string                                   uraianba:string 
+      uraianba:string                                  
     }                                                  }
   ]                                                   ]
 */
@@ -32,24 +34,42 @@ const DipaContext = createContext({});
 const DipaProvider = memo(({children}) => {
   const [spending, setSpending] = useState(null);
   const [budget, setBudget] = useState(null);
+  const [satkerRef, setSatkerRef] = useState(null);
 
-  // return seluruh row yang udah di sort descending, format tanggal Datetime {MM-DD-YYYY HH:MM:SS}
+  // akun 51-59 only
   async function getSpendingData(){
-    const result = await axios.get("http://localhost:3015/getAllSpending");
-    setSpending(parseAndSortDate(result.data));
-  };
+    const result = await axios.get("http://localhost:3015/getAllSpending"); 
+    const filteredSpending = result.data.filter((item) => {                    
+      const account = parseInt(item.akun.slice(0,2));
+      return account <60
+    }); 
+    setSpending(parseAndSortDate(filteredSpending));   // return seluruh row yang udah di sort descending
+  };                                              // format tanggal Datetime {MM-DD-YYYY HH:MM:SS}
+
+  // akun 51-59 only
   async function getBudgetData(){
     const result = await axios.get("http://localhost:3015/getAllBudget");
-    setBudget(result.data);
+    const filteredBudget = result.data.filter((item) => {                     
+      const account = parseInt(item.akun.slice(0,2));
+      return account <60
+    }); 
+    setBudget(filteredBudget);
+  };
+
+  // @data model = [{kdba:string, kdbaes1:string, kdsatker:string, nmsatker:string}]
+  async function getSatkerRef(){
+    const result = await axios.get("http://localhost:3015/getAllSatkerRef");
+    setSatkerRef(result.data);
   };
 
 
   useEffect(() => {
     getSpendingData();
     getBudgetData();
+    getSatkerRef();
   }, [])
 
-  function parseAndSortDate (row){
+  function parseAndSortDate (row){  // return seluruh row yang udah di sort descending
     const allDate = row?.map((item) => {
       const [day, month, year] = item.tanggal.split("/");
       const date = new Date(year, month-1, day);
@@ -57,39 +77,13 @@ const DipaProvider = memo(({children}) => {
     });
     const sortedDesc = allDate?.sort((a, b) => b.date-a.date);
     return sortedDesc
-    
   };
 
-  // output dalam bentuk array [MM/dd/yyyy, MM/dd,yyy]
-  function getLast30Days(row){
-    let last30Days = [];
-    row?.filter((item) => {
-      const dateStr = format(item.date, "MM/dd/yyyy");
-      last30Days?.includes(dateStr)
-        ?null
-        :last30Days.push(dateStr)
-    });
-    let last30DaysString = last30Days.slice(0, 25);
-    return last30DaysString   
-  };
-
-  // output dalam bentuk array [int, int, int]
-  function getY30Days(array, row){
-    let yAxisData = [];
-    array?.map((item) => {
-      const yAxis = row
-      .filter((curr) => format(curr.date, "MM/dd/yyyy") === item)
-      .reduce((acc, curr) => acc + parseInt(curr.amount), 0);
-      
-      yAxisData.push(yAxis)
-    })
-
-    return yAxisData
-  };
+ 
 
 
   return(
-    <DipaContext.Provider value={{spending, getSpendingData, budget, getBudgetData, getLast30Days, getY30Days}}>
+    <DipaContext.Provider value={{spending, getSpendingData, budget, getBudgetData, satkerRef, getSatkerRef}}>
       {children}
     </DipaContext.Provider>
   )
