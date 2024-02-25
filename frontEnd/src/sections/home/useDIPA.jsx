@@ -34,7 +34,6 @@ const DipaContext = createContext({});
 const DipaProvider = memo(({children}) => {
   const [spending, setSpending] = useState(null);
   const [budget, setBudget] = useState(null);
-  const [satkerRef, setSatkerRef] = useState(null);
 
   // akun 51-59 only
   async function getSpendingData(){
@@ -56,17 +55,10 @@ const DipaProvider = memo(({children}) => {
     setBudget(filteredBudget);
   };
 
-  // @data model = [{kdba:string, kdbaes1:string, kdsatker:string, nmsatker:string}]
-  async function getSatkerRef(){
-    const result = await axios.get("http://localhost:3015/getAllSatkerRef");
-    setSatkerRef(result.data);
-  };
-
 
   useEffect(() => {
     getSpendingData();
     getBudgetData();
-    getSatkerRef();
   }, [])
 
   function parseAndSortDate (row){  // return seluruh row yang udah di sort descending
@@ -83,7 +75,7 @@ const DipaProvider = memo(({children}) => {
 
 
   return(
-    <DipaContext.Provider value={{spending, getSpendingData, budget, getBudgetData, satkerRef, getSatkerRef}}>
+    <DipaContext.Provider value={{spending, getSpendingData, budget, getBudgetData}}>
       {children}
     </DipaContext.Provider>
   )

@@ -22,7 +22,7 @@ export default function AppBar() {
 
   return (
     <>
-    <Box sx={{ flexGrow: 1, borderBottom:1, borderColor:'divider'}} >
+    <Box sx={{ flexGrow: 1, borderBottom:1, borderColor:'divider', maxHeight:'70px'}} >
         <Toolbar>
           <Box sx={{height:40, width:40}}>
             <img src="/dashboard-logo.png" alt="logo" style={{height:'100%', width:'100%'}}/>

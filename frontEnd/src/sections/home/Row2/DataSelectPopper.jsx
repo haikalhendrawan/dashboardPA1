@@ -28,7 +28,6 @@ export default function DataSelectPopper(props) {
 
   const handleClick = (event) => {
     props.changeValue(event.target.value)
-    console.log(event.target.value)
   };
 
   const selectedSx= {fontWeight:theme.typography.fontWeightMedium, backgroundColor:theme.palette.background.neutral}

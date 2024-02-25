@@ -6,10 +6,11 @@ import CircularProgress from '@mui/material/CircularProgress';
 import useDIPA from "../useDIPA";
 import NumbersCard from "./NumbersCard";
 import SpendingPerAccount from "./SpendingPerAccount";
+import useLoading from "../../../hooks/useLoading";
 
 export default function Row1(){
   const theme = useTheme();
-  const [open, setOpen] = useState(true); //backdrop
+  const {isLoading, setIsLoading} = useLoading();
   const {spending, budget} = useDIPA();
   const [totalBudget, setTotalBudget] = useState();
   const [totalSpending, setTotalSpending] = useState();
@@ -43,30 +44,19 @@ export default function Row1(){
 
     let timeoutId;
 
-    async function waitTime(){
-      spending
-      ?timeoutId = setTimeout(() => {
-        setOpen(false)
-      }, 500)
-      :null
+
+    if(budget){
+    setTheData();
+    return(() => {clearTimeout(timeoutId)})
     }
 
-    setTheData();
-    waitTime();
+    
 
-    return(() => {clearTimeout(timeoutId)})
-
-  }, [spending, budget]);
+  }, [budget]);
 
 
   return(
     <>
-        <Backdrop
-          sx={{ color: '#f7f9fc', zIndex:9999, backgroundColor: alpha(theme.palette.grey[300], 0.8)}}
-          open={open}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
 
        <Grid item xs={6} sm={6} md={2}>
           <NumbersCard 
@@ -92,7 +82,7 @@ export default function Row1(){
             number={percentRlsd}
             footer={`dari anggaran`}
             icon={`mdi:chart-timeline`}
-            iconColor={theme.palette.primary.dark}
+            iconColor={theme.palette.purple.dark}
           />
         </Grid>
         <Grid item xs={12} sm={12} md={6}>

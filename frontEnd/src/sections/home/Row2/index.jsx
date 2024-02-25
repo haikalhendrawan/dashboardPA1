@@ -6,9 +6,10 @@ import useDIPA from "../useDIPA";
 import Chart from '../../../components/Charts';
 import { useChart } from '../../../components/Charts';
 import Iconify from '../../../components/Iconify';
-import SpendingChart from "./SpendingChart";
+import SpendingTrend from "./SpendingTrend";
 import SpendingProportion from "./SpendingProportion";
 import { format } from "date-fns";
+import useLoading from "../../../hooks/useLoading";
 // ----------------------------------------------------------------
 
 // -----------------------------------------------------------------
@@ -37,16 +38,20 @@ export default function Row2(props){
   });
   const [trendOption, setTrendOption] = useState(0);
   const [proportionOption, setProportionOption] = useState(0);
+  const [isReady, setIsReady] = useState(false);
 
   const handleChangeTrend = (newValue) => {
     setTrendOption(newValue);
-    setXLabel(trendValue.xMonth);
-    setYLabel(trendValue.yMonth);
   };
 
   const handleChangeProportion = (newValue) => {
     setProportionOption(newValue);
   };
+
+  useEffect(() => {
+    if(budget && spending){setIsReady(true)}
+    else{setIsReady(false)}
+  }, [budget])
 
   useEffect(() => {
     async function render(){
@@ -75,40 +80,42 @@ export default function Row2(props){
       // get last 30 day data
       const todayMin30 = new Date(new Date().setDate(today.getDate()-29));
       const endDate = today; 
-      const ranged30day = spending?await getRangedData(spending, todayMin30, endDate):[];
-      const x = spending?await getXLabel(ranged30day):[];
-      const y = x?await getYLabel(ranged30day, x):[];
+      const ranged30day = isReady?await getRangedData(spending, todayMin30, endDate):[];
+      const x = isReady?await getXLabel(ranged30day):[];
+      const y = isReady?await getYLabel(ranged30day, x):[];
 
       // get last month data
-      const firstDateCurrMonth = today.setDate(1);
-      const lastDateCurrMonth = (new Date(today.getFullYear(), today.getMonth()+1, 1) - 1);
-      const rangedMonth = spending?await getRangedData(spending, firstDateCurrMonth, lastDateCurrMonth):[];
-      const x2 = spending?await getXLabel(rangedMonth):[]
-      const y2 = x2?await getYLabel(rangedMonth, x2):[];
+      const firstDateCurrMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      const lastDateCurrMonth = new Date(today.getFullYear(), today.getMonth()+1, 1) - 1;
+      const rangedMonth = isReady?await getRangedData(spending, firstDateCurrMonth, lastDateCurrMonth):[];
+      const x2 = isReady?await getXLabel(rangedMonth):[]
+      const y2 = isReady?await getYLabel(rangedMonth, x2):[];
 
       // get all year data
       const firstDateCurrYear = new Date(today.getFullYear(), 0, 1);
       const lastDateCurrYear= new Date(today.getFullYear(), 11, 31);
-      const rangedYear = spending?await getRangedData(spending, firstDateCurrYear, lastDateCurrYear):[];
+      const rangedYear = isReady?await getRangedData(spending, firstDateCurrYear, lastDateCurrYear):[];
 
-      const x3 = spending?await getXLabel(rangedYear):[];
-      const y3 = x3?await getYLabel(rangedYear, x3):[];
+      const x3 = isReady?await getXLabel(rangedYear):[];
+      const y3 = isReady?await getYLabel(rangedYear, x3):[];
 
       setXLabel({xDays30:x, xMonth:x2, xYear:x3,});
       setYLabel({yDays30:y, yMonth:y2, yYear:y3,});
     }
 
+    if(isReady){
     render();
-  }, [spending, budget])
+    };
+  }, [isReady])
 
 
   return(
     <>
 
         <Grid item xs={12} sm={6} md={8}>
-          <SpendingChart
+          <SpendingTrend
                key={trendOption}
-               title="Tren Realisasi Belanja"
+               title="Tren Belanja"
                subheader={'Dalam Rupiah (Rp)'}
                chart={{
                  labels: Object.values(xLabel)[trendOption],
@@ -127,7 +134,7 @@ export default function Row2(props){
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <SpendingProportion
-              title="Proporsi Belanja"
+              title="Proporsi Per Belanja"
               subheader={`Dari Total ${proportionOption==0?'Anggaran':'Realisasi'}`}
               chartData={[
                 { label: 'Belanja Pegawai (51)', value: proportionOption==1?parseInt(value.amount51):parseInt(value.akun51)},
@@ -138,7 +145,7 @@ export default function Row2(props){
               chartColors={[
                 theme.palette.primary.main,
                 theme.palette.warning.main,
-                theme.palette.purple.main,
+                theme.palette.purple.dark,
                 theme.palette.error.dark,
               ]}
               proportion={proportionOption}

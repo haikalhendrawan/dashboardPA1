@@ -3,10 +3,10 @@ import { useMemo, useState, createContext, useContext } from 'react';
 const LoadingContext = createContext();
 
 const LoadingProvider = ({children}) => {
-  const [isloading, setLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   return(
-    <LoadingContext.Provider value={{isloading, setLoading}}>
+    <LoadingContext.Provider value={{isLoading, setIsLoading}}>
       {children}
     </LoadingContext.Provider>
   )

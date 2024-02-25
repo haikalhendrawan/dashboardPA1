@@ -90,8 +90,8 @@ export default function SpendingPerAccount({spendingData, budgetData}){
             <RadialChart 
               chart={{
                 labels:[value.amount53],
-                colors:theme.palette.primary.main,
-                toColor:theme.palette.primary.light,  
+                colors:theme.palette.purple.darker,
+                toColor:theme.palette.purple.dark,  
                 series:[value.akun53]
                 }} 
               />

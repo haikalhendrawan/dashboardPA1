@@ -17,7 +17,9 @@ function App() {
       <LoadingProvider>
         <BrowserRouter>
           <StyledChart />
+          <DipaProvider>
             <Router />
+          </DipaProvider>
         </BrowserRouter>
       </LoadingProvider>
     </ThemeProvider>

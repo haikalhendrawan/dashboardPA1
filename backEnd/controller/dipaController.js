@@ -5,6 +5,7 @@ import Papa from "papaparse";
 import fs from "fs";
 import multer from "multer";
 import upload from "../config/multer.js";
+import {parseAndSortDate, filterAcc60, getXAndY} from "../utility/spendingUtil.js";
 
 // GET REQUEST -------------------------------------------------------------------------
 const getAllSpending = async(req, res) => {
@@ -33,6 +34,31 @@ const getAllBudget = async(req, res) => {
     return res.status(500).json({isError:true, msg:'Internal server error', err})
   }
 };
+
+const getAllSpending50 = async(req, res) => {
+  try{
+    const data = await getSpending();
+    const filtered = await filterAcc60(data);
+    const sorted = await parseAndSortDate(filtered);
+    const result= await getXAndY(sorted);
+
+    return res.status(200).json(result)
+  }catch(err){
+    return res.status(500).json({isError:true, msg:'Internal server error', err})
+  }
+};
+
+const getPerSpendingTrend = async(req, res) => {
+  try{
+    const data = await getSpending();
+    const filtered = await filterAcc60(data);
+    const sorted = await parseAndSortDate(filtered);
+
+    return res.status(200).json(sorted)
+  }catch(err){
+    return res.status(500).json({isError:true, msg:'Internal server error', err})
+  }
+}
 
 
 // ADD REQUEST ----------------------------------------------------------------------------
@@ -71,4 +97,4 @@ const addAllBudget = async(req, res) => {
 
 
 
-export {getAllSpending, getAllRevenue, getAllBudget, addAllSpending, addAllBudget}
+export {getAllSpending, getAllRevenue, getAllBudget, addAllSpending, addAllBudget, getAllSpending50}

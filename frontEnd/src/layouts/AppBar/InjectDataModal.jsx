@@ -174,7 +174,7 @@ export default function InjectDataModal(props) {
                         variant='standard' 
                         value={file?file[0].name:''} 
                         inputProps={{sx:{fontSize:10}}}
-                        InputPropsdisabled>
+                        >
                         Upload File
                       </TextField>
                     </Stack>

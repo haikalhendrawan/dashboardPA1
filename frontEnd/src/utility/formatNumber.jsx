@@ -6,6 +6,12 @@ export function fNumber(number) {
   return numeral(number).format();
 }
 
+export function fNumberY(number) {
+  if(number>100){return numeral(number).format()}
+  else{return numeral(number).format('0.0');}
+  
+}
+
 export function fCurrency(number) {
   const format = number ? numeral(number).format('$0,0.00') : '';
 
