@@ -197,12 +197,12 @@ async function getTotalPerSatker(spending, budget){
 async function orderAndSort(data, value){
   let output = [];
 
-  if(value==2){
-    output = data?.slice(((data.length)/2-10), ((data.length)/2)).sort((a, b) => {return b.value-a.value})
-  }else if(value==1){
-    output = data?.slice(data.length-10, data.length-1).sort((a, b) => {return a.value-b.value})
-  }else{
-    output = data?.slice(0, 10)
+  if(value==2){ // median
+    output = data?.toSorted((a, b) => {return b.value-a.value}).slice((Math.round((data.length)/2)-10), (Math.round((data.length))/2));
+  }else if(value==1){ // ascending
+    output = data?.toSorted((a, b) => {return a.value-b.value}).slice(0, 10);
+  }else{ // descending
+    output = data?.toSorted((a, b) => {return b.value-a.value}).slice(0, 10);
   }
   return output
 

@@ -1,7 +1,8 @@
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import ReactApexChart from 'react-apexcharts';
-import { Card, CardHeader, Box, Button, Skeleton, Typography} from '@mui/material';
+import { Card, CardHeader, Box, Button, Skeleton, Typography, Stack} from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
+import LinearProgress from '@mui/material/LinearProgress';
 import {styled, useTheme} from '@mui/material/styles';
 import Chart from '../../../components/Charts';
 import { useChart } from '../../../components/Charts';
@@ -28,10 +29,27 @@ export default function PerSpendingTrend({ title, subheader, chart, trend, chang
   const { labels, colors, series, options } = chart;
   const [open, setOpen] = useState(null);
   const theme = useTheme();
+  const [progress, setProgress] = useState(0);
 
   const handleClick = (event) => {
     setOpen(event.currentTarget);
   };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setProgress((oldProgress) => {
+        if (oldProgress === 100) {
+          return 100;
+        }
+        const diff = Math.random() * 9;
+        return Math.min(oldProgress + diff, 100);
+      });
+    }, 1000);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, []);
 
   const handleClose = () => {
     setOpen(null);
@@ -113,10 +131,10 @@ export default function PerSpendingTrend({ title, subheader, chart, trend, chang
       <Box sx={{ p: 3, pb: 1 }}>
       {yLabel51.yDays30.length===0
         ?
-        <Box sx={{height:333, display: 'flex', flexDirection:"column", justifyContent: 'center', alignItems:'center'}}>
-          <CircularProgress color="primary" />
-          <Typography variant="body2">Fetching Data</Typography>
-        </Box>
+        <Box style={{ height: 333, display:'flex', flexDirection:'column', alignItems: 'center', justifyContent: 'center' }}>
+          <LinearProgress variant="determinate" value={progress} sx={{width: "50%"}}/>
+          <Typography variant='body2'>Fetching data..</Typography>
+        </Box> 
         :
         <Chart
           dir="ltr"

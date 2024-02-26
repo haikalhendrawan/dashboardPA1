@@ -18,18 +18,14 @@ export default function Row1(){
   const [dateText, setDateText] = useState();
   const [yearText, setYearText] = useState();
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   useEffect(() => {
-    async function setTheData(){
+    async function render(){
       const allSpending = spending?await getTotal(spending):null;
       const formattedSpending = spending?await formatToTrilyun(allSpending):null;
       setTotalSpending(formattedSpending);
 
       const allBudget = budget?await getTotal(budget):null;
-      const formattedBudget = spending?await formatToTrilyun(allBudget):null;
+      const formattedBudget = budget?await formatToTrilyun(allBudget):null;
       setTotalBudget(formattedBudget);
 
       const percent = allBudget & allSpending?(allSpending/allBudget*100).toFixed(2): null;
@@ -42,22 +38,15 @@ export default function Row1(){
       setYearText(year)
     }
 
-    let timeoutId;
-
-
-    if(budget){
-    setTheData();
-    return(() => {clearTimeout(timeoutId)})
+    if(spending && budget){
+    render();
     }
 
-    
-
-  }, [budget]);
+  }, [spending, budget]);
 
 
   return(
     <>
-
        <Grid item xs={6} sm={6} md={2}>
           <NumbersCard 
             header={`Anggaran Belanja`}
@@ -78,7 +67,7 @@ export default function Row1(){
         </Grid>
         <Grid item xs={6} sm={6} md={2}>
           <NumbersCard 
-            header={`Persentase Realisasi `}
+            header={`Persen Realisasi `}
             number={percentRlsd}
             footer={`dari anggaran`}
             icon={`mdi:chart-timeline`}

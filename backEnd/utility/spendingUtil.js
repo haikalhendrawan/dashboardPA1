@@ -68,7 +68,7 @@ export async function getXAndY(spending){
   // chart tren per jenis belanja
   const today = new Date();
 
-  // get last 30 day data
+  // get data 30 bulan terakhir
   const todayMin30 = new Date(new Date().setDate(today.getDate()-29));
   const endDate = today; 
   const ranged30day = await getRangedData(spending, todayMin30, endDate);
@@ -77,7 +77,7 @@ export async function getXAndY(spending){
   const y52 = await getYLabel(ranged30day, x, 52);
   const y53 = await getYLabel(ranged30day, x, 53);
 
-  // get last month data
+  // get data bulan ybs
   const firstDateCurrMonth = new Date(today.getFullYear(), today.getMonth(), 1);
   const lastDateCurrMonth = new Date(today.getFullYear(), today.getMonth()+1, 1) - 1;
   const rangedMonth = await getRangedData(spending, firstDateCurrMonth, lastDateCurrMonth);
@@ -86,7 +86,7 @@ export async function getXAndY(spending){
   const y252 = await getYLabel(rangedMonth, x2, 52);
   const y253 = await getYLabel(rangedMonth, x2, 53);
 
-  // get all year data
+  // get all data
   const firstDateCurrYear = new Date(today.getFullYear(), 0, 1);
   const lastDateCurrYear= new Date(today.getFullYear(), 11, 31);
   const rangedYear = await getRangedData(spending, firstDateCurrYear, lastDateCurrYear);
@@ -95,8 +95,6 @@ export async function getXAndY(spending){
   const y351 = await getYLabel(rangedYear, x3, 51);
   const y352 = await getYLabel(rangedYear, x3, 52);
   const y353 = await getYLabel(rangedYear, x3, 53);
-
-  console.log(x)
 
   return {x, x2, x3, y51, y52, y53, y251, y252, y253, y351, y352, y353}
 }

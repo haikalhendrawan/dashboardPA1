@@ -24,7 +24,7 @@ app.use(referenceRoute);
 
 
 app.get("/", (req, res) => {
-  console.log('ok')
+  return res.status(200).json({msg:'connected'})
 });
 
 app.listen(process.env.PORT, () => {

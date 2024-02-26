@@ -5,10 +5,11 @@ import {styled, useTheme, alpha} from '@mui/material/styles';
 import { DipaProvider } from "../sections/home/useDIPA.jsx";
 import CircularProgress from '@mui/material/CircularProgress';
 import LinearProgress from '@mui/material/LinearProgress';
+import PuffLoader from "react-spinners/PuffLoader";
 import Row1 from "../sections/home/Row1";
 import Row2 from "../sections/home/Row2";
 import Row3 from "../sections/home/Row3";
-import useDIPA from "../sections/home/useDIPA.jsx";
+import Row4 from "../sections/home/Row4";
 import useLoading from "../hooks/useLoading.jsx"
 
 // --------------------------------------------------------------------------
@@ -33,11 +34,18 @@ export default function Home() {
     <>
       <Container maxWidth="xl">
         <Backdrop
-          sx={{ color: '#f7f9fc', zIndex:9999, backgroundColor: alpha(theme.palette.grey[300], 0.8)}}
+          sx={{ color: '#f7f9fc', zIndex:9999, backgroundColor: alpha(theme.palette.grey[800], 0.8)}}
           open={isLoading}
           onClick={handleClose}
         >
-          <CircularProgress color="primary" />
+          <div style ={{position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
+            <PuffLoader 
+              color={'blue'}  
+              sx={{ justifyContent: 'center', alignItems: 'center' }} 
+              speedMultiplier={0.7}
+              />
+            <Typography variant="body2">Loading</Typography>
+          </div>
         </Backdrop>
         {/* <Stack direction="row" alignItems="center" justifyContent="center " mb={5}>
           <SelectionTab tab={disp} setTab={handleTabChange}/>
@@ -47,6 +55,7 @@ export default function Home() {
             <Row1 />
             <Row2 />
             <Row3 />
+            <Row4 />
         </Grid>
       </Container>
 

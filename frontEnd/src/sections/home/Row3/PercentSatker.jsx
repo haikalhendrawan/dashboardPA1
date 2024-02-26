@@ -28,6 +28,7 @@ const allValue = ['Top 10', 'Bottom 10', 'Median'];
 // --------------------------------------------------------------------
 export default function PercentSatker({ title, subheader, chartData, colors, top10Satker, handleChange,...other }) {
   const theme = useTheme();
+  
   const [open, setOpen] = useState(null);
 
   const handleClick = (event) => {

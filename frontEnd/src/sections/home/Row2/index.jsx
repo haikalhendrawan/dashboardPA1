@@ -49,9 +49,12 @@ export default function Row2(props){
   };
 
   useEffect(() => {
-    if(budget && spending){setIsReady(true)}
-    else{setIsReady(false)}
-  }, [budget])
+    if(budget && spending){
+      setIsReady(true)
+    }else{
+      setIsReady(false)
+    }
+  }, [spending, budget])
 
   useEffect(() => {
     async function render(){
@@ -134,7 +137,7 @@ export default function Row2(props){
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <SpendingProportion
-              title="Proporsi Per Belanja"
+              title="Proporsi Belanja"
               subheader={`Dari Total ${proportionOption==0?'Anggaran':'Realisasi'}`}
               chartData={[
                 { label: 'Belanja Pegawai (51)', value: proportionOption==1?parseInt(value.amount51):parseInt(value.akun51)},
@@ -188,8 +191,6 @@ async function getRangedData(data, startDate, endDate){
   if(!data){return false}
 
   const today = new Date();
-  const currentMonth = today.getMonth();
-  const currentYear = today.getFullYear();
 
   const rangedArray = data.filter((item) => {
     const itemDate = item.date;

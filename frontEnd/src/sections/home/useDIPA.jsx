@@ -37,7 +37,7 @@ const DipaProvider = memo(({children}) => {
 
   // akun 51-59 only
   async function getSpendingData(){
-    const result = await axios.get("http://localhost:3015/getAllSpending"); 
+    const result = await axios.get(`${import.meta.env.VITE_API_URL}/getAllSpending`); 
     const filteredSpending = result.data.filter((item) => {                    
       const account = parseInt(item.akun.slice(0,2));
       return account <60
@@ -47,14 +47,13 @@ const DipaProvider = memo(({children}) => {
 
   // akun 51-59 only
   async function getBudgetData(){
-    const result = await axios.get("http://localhost:3015/getAllBudget");
+    const result = await axios.get(`${import.meta.env.VITE_API_URL}/getAllBudget`);
     const filteredBudget = result.data.filter((item) => {                     
       const account = parseInt(item.akun.slice(0,2));
       return account <60
     }); 
     setBudget(filteredBudget);
   };
-
 
   useEffect(() => {
     getSpendingData();
@@ -70,9 +69,6 @@ const DipaProvider = memo(({children}) => {
     const sortedDesc = allDate?.sort((a, b) => b.date-a.date);
     return sortedDesc
   };
-
- 
-
 
   return(
     <DipaContext.Provider value={{spending, getSpendingData, budget, getBudgetData}}>

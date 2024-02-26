@@ -1,3 +1,4 @@
+import {useState, useEffect} from "react";
 import PropTypes from 'prop-types';
 import ReactApexChart from 'react-apexcharts';
 // @mui
@@ -8,6 +9,7 @@ import Iconify from '../../../components/Iconify';
 import { fNumber } from '../../../utility/formatNumber';
 // components
 import { useChart } from '../../../components/Charts';
+import BAPopper from './BAPopper';
 
 // ----------------------------------------------------------------------
 const StyledButton = styled(Button)(({theme}) => ({
@@ -22,10 +24,12 @@ const StyledButton = styled(Button)(({theme}) => ({
   }
 }));
 
-const allValue = ['Top 10', 'Bottom 10'];
+const allValue = ['Top 10', 'Bottom 10', 'Median'];
 // --------------------------------------------------------------------
-export default function NumberPerUnit({ title, subheader, chartData, colors, ...other }) {
+export default function PercentBA({ title, subheader, chartData, colors, option, handleChange, ...other }) {
   const theme = useTheme();
+
+  const [open, setOpen] = useState(null);
 
   const chartLabels = chartData.map((i) => i.label);
 
@@ -59,7 +63,16 @@ export default function NumberPerUnit({ title, subheader, chartData, colors, ...
     colors
   });
 
+  const handleClick = (event) => {
+    setOpen(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setOpen(null);
+  };
+
   return (
+    <>
     <Card {...other}>
       <CardHeader 
         title={title} 
@@ -70,9 +83,9 @@ export default function NumberPerUnit({ title, subheader, chartData, colors, ...
             variant='outlined'
             endIcon={<Iconify icon="mdi:arrow-down-drop" />}
             disableFocusRipple
-            // onClick={handleClick}
+            onClick={handleClick}
             >
-            {allValue[0]}
+            {allValue[option]}
           </StyledButton>
         }  
         />
@@ -81,5 +94,8 @@ export default function NumberPerUnit({ title, subheader, chartData, colors, ...
         <ReactApexChart type="bar" series={[{ data: chartSeries }]} options={chartOptions} height={364} />
       </Box>
     </Card>
+
+    <BAPopper open={open} close={handleClose} value={option} changeValue={handleChange} />
+    </>
   );
 }
