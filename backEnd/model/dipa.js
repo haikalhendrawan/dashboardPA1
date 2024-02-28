@@ -44,11 +44,15 @@ const getBudget = async() => {
 
 const getSpendingPerAccountAndDate = async() => {
   try{
-    const q = `SELECT real_belanja.akun, SUM(real_belanja.amount), real_belanja.tanggal, ref_akun.nmakun
-                FROM real_belanja
-                LEFT JOIN ref_akun
-                ON real_belanja.akun = ref_akun.kdakun
-                GROUP BY real_belanja.akun, real_belanja.tanggal, ref_akun.nmakun`
+    const q = `SELECT 
+                real_belanja.akun, 
+                SUM(real_belanja.amount) AS total, 
+                real_belanja.tanggal, 
+                ref_akun.nmakun
+                  FROM real_belanja
+                  LEFT JOIN ref_akun
+                  ON real_belanja.akun = ref_akun.kdakun
+                  GROUP BY real_belanja.akun, real_belanja.tanggal, ref_akun.nmakun`
     const [rows] = await pool.execute(q);
     return rows
   }catch(err){

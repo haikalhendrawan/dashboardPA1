@@ -49,7 +49,8 @@ const getAllSpending50 = async(req, res) => {
 const getAccountTrend = async(req, res) => {
   try{
     const data = await getSpendingPerAccountAndDate();
-    return res.status(200).json(data)
+    const parsed = await parseAndSortDate(data);
+    return res.status(200).json(parsed)
   }catch(err){
     return res.status(500).json({isError:true, msg:'Internal server error', err})
   }
