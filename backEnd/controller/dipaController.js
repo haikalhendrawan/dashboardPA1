@@ -1,4 +1,4 @@
-import { getSpending, getBudget, getRevenue, 
+import { getSpending, getBudget, getRevenue, getSpendingPerAccountAndDate,
           addSpending, addBudget, 
           deleteSpending, deleteBudget } from "../model/dipa.js";
 import multer from "multer";
@@ -46,17 +46,14 @@ const getAllSpending50 = async(req, res) => {
   }
 };
 
-const getPerSpendingTrend = async(req, res) => {
+const getAccountTrend = async(req, res) => {
   try{
-    const data = await getSpending();
-    const filtered = await filterAcc60(data);
-    const sorted = await parseAndSortDate(filtered);
-
-    return res.status(200).json(sorted)
+    const data = await getSpendingPerAccountAndDate();
+    return res.status(200).json(data)
   }catch(err){
     return res.status(500).json({isError:true, msg:'Internal server error', err})
   }
-}
+};
 
 
 // ADD REQUEST ----------------------------------------------------------------------------
@@ -95,4 +92,11 @@ const addAllBudget = async(req, res) => {
 
 
 
-export {getAllSpending, getAllRevenue, getAllBudget, addAllSpending, addAllBudget, getAllSpending50}
+export {
+  getAllSpending, 
+  getAllRevenue, 
+  getAllBudget,
+  getAccountTrend, 
+  addAllSpending, 
+  addAllBudget, 
+  getAllSpending50}

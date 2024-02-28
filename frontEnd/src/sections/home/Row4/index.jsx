@@ -4,6 +4,7 @@ import { Card, CardHeader, Box, Button, Grid} from '@mui/material';
 import {styled, useTheme} from '@mui/material/styles';
 import useDIPA from "../useDIPA";
 import PercentBA from "./PercentBA";
+import PerAccountTrend from "./PerAccountTrend";
 
 
 
@@ -18,11 +19,16 @@ export default function Row4(props){
 
   const {spending, budget} = useDIPA();
 
+  const [accountOption, setAccountOption] = useState(0);
+
   const handleChangeOption= async(newValue) => {
     setOption(newValue)
     const arr = await orderAndSort(perBA, newValue);
-    console.log(perBA)
     setChartData(arr);
+  };
+
+  const handleChangeAccount = async(newValue) => {
+    setAccountOption(newValue);
   };
 
   const [isReady, setIsReady] = useState(false);
@@ -46,7 +52,7 @@ export default function Row4(props){
       render();
     };
 
-  }, [isReady])
+  }, [isReady]);
 
   return(
     <>
@@ -60,26 +66,27 @@ export default function Row4(props){
             handleChange={handleChangeOption}
           />
         </Grid> 
-        <Grid item xs={12} sm={6} md={4}>
-          <PercentBA
-            title="Belanja Per Satker"
-            subheader="Nominal belanja"
-            chartData={chartData}
-            option={option}
-            colors={theme.palette.primary.main}
-            handleChange={handleChangeOption}
-          />
+        <Grid item xs={12} sm={6} md={8}>
+        <PerAccountTrend
+               key={accountOption}
+               title="Tren Belanja"
+               subheader={'Dalam Rupiah (Rp)'}
+               chart={{
+                 labels: ['01/01/2023', '01/02/2023', '01/03/2023'],
+                 series: [
+                   {
+                     name: 'Realisasi Belanja (Rp)',
+                     type: 'area',
+                     fill: 'gradient',
+                     data: [123, 34, 455],
+                   },
+                 ],
+               }}
+               trend={accountOption}
+               changeTrend={handleChangeAccount}
+            /> 
         </Grid> 
-        <Grid item xs={12} sm={6} md={4}>
-          <PercentBA
-            title="Belanja Per BA"
-            subheader="Nominal belanja"
-            chartData={chartData}
-            option={option}
-            colors={theme.palette.warning.main}
-            handleChange={handleChangeOption}
-          />
-        </Grid> 
+
     </>
   )
 }
@@ -136,3 +143,7 @@ async function orderAndSort(data, value){
   }
   return output
 }
+
+async function getTotal1Account(spending){
+  
+} 

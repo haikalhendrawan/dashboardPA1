@@ -13,7 +13,7 @@ const getSpending = async() => {
     const [rows] = await pool.execute(q);
     return rows
   }catch(err){
-    console.log(err)
+    return err
   }
 };
 
@@ -23,7 +23,7 @@ const getRevenue = async() => {
     const [rows] = await pool.execute(q);
     return rows
   }catch(err){
-    console.log(err)
+    return err
   }
 };
 
@@ -38,7 +38,21 @@ const getBudget = async() => {
     const [rows] = await pool.execute(q);
     return rows
   }catch(err){
-    console.log(err)
+    return err
+  }
+};
+
+const getSpendingPerAccountAndDate = async() => {
+  try{
+    const q = `SELECT real_belanja.akun, SUM(real_belanja.amount), real_belanja.tanggal, ref_akun.nmakun
+                FROM real_belanja
+                LEFT JOIN ref_akun
+                ON real_belanja.akun = ref_akun.kdakun
+                GROUP BY real_belanja.akun, real_belanja.tanggal, ref_akun.nmakun`
+    const [rows] = await pool.execute(q);
+    return rows
+  }catch(err){
+    return err
   }
 };
 
@@ -56,8 +70,7 @@ const addSpending = async(filePath) => {
     return result
   }catch(err){   
     await connection.rollback();
-    console.log(err);
-    return {err}
+    return err
   }finally{
     connection.release();
   } 
@@ -76,7 +89,6 @@ const addBudget = async(filePath) => {
     return result
   }catch(err){   
     await connection.rollback();
-    console.log(err);
     return {err}
   }finally{
     connection.release();
@@ -106,4 +118,12 @@ const deleteBudget = async() => {
 };
 
 
-export {getSpending, getRevenue, getBudget, addSpending, addBudget, deleteSpending, deleteBudget}
+export {
+  getSpending, 
+  getRevenue, 
+  getBudget,
+  getSpendingPerAccountAndDate, 
+  addSpending, 
+  addBudget, 
+  deleteSpending, 
+  deleteBudget}
