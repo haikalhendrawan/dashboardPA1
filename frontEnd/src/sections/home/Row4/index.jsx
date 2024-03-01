@@ -7,6 +7,7 @@ import {format} from "date-fns";
 import useDIPA from "../useDIPA";
 import PercentBA from "./PercentBA";
 import PerAccountTrend from "./PerAccountTrend";
+import Scrollbar from "../../../components/Scrollbar";
 
 // ----------------------------------------------------------
 
@@ -18,6 +19,10 @@ export default function Row4(props){
   const [perBA, setPerBA] = useState([]);
 
   const [perAccount, setPerAccount] = useState([]);
+
+  const [account, setAccount] = useState('511111');
+
+  const [allAcc, setAllAcc] = useState([]);
 
   const [chartData, setChartData] = useState([]);
 
@@ -31,18 +36,21 @@ export default function Row4(props){
     setChartData(arr);
   };
 
-  const handleChangeAccount = async(newValue) => {
-    setAccountOption(newValue);
-  };
-
   const [xLabel, setXLabel] = useState(null);
 
   const [yLabel, setYLabel] = useState(null);
 
   const [isReady, setIsReady] = useState(false);
 
+  const handleChangeAccount = async(newValue) => {
+    setAccountOption(newValue);
+    if(parseInt(newValue)===0){await setLast30Days(perAccount)}
+    if(parseInt(newValue)===1){await setLastMonth(perAccount)}
+    if(parseInt(newValue)===2){await setAllYear(perAccount)}
+  };
+
   useEffect(() => {
-    if(budget && spending && xLabel && yLabel){
+    if(budget && spending && xLabel && yLabel ){
       setIsReady(true)
     };
   }, [budget, spending, xLabel, yLabel]);
@@ -67,22 +75,39 @@ export default function Row4(props){
       // chart trend akun
       const result = await axios.get(`${import.meta.env.VITE_API_URL}/getAccountTrend`); 
       setPerAccount(result.data);  
-      const log = await getLast30Day(result.data, '511219');
-      const allDate = log.map((item) => {
-        const date = item.tanggal.split("/")[0];
-        const month = item.tanggal.split("/")[1];
-        const year = item.tanggal.split("/")[2];
-        return month+"/"+date+"/"+year
-      });
-      setXLabel(allDate)
-      console.log(allDate)
-      const allValues = log.map((item) => {return item.total});
-      setYLabel(allValues)
-      console.log(allValues)
+      await setLast30Days(result.data);
+      const allAkun = await getAllAccount(result.data);
+      setAllAcc(allAkun);
     };
-
     getPerAccount()
   }, []);
+
+  async function setLast30Days(data){
+    const {startDate, endDate} = await last30Day();
+    const row = await getRange(data, '511111', startDate, endDate);
+    const x = await getXLabel(row);
+    setXLabel(x)
+    const y = await getYLabel(row);
+    setYLabel(y);
+  }
+
+  async function setLastMonth(data){
+    const {startDate, endDate} = await lastMonth();
+    const row = await getRange(data, '511111', startDate, endDate);
+    const x = await getXLabel(row);
+    setXLabel(x)
+    const y = await getYLabel(row);
+    setYLabel(y);
+  }
+
+  async function setAllYear(data){
+    const {startDate, endDate} = await allYear();
+    const row = await getRange(data, '511111', startDate, endDate);
+    const x = await getXLabel(row);
+    setXLabel(x)
+    const y = await getYLabel(row);
+    setYLabel(y);
+  }
 
   return(
     <>
@@ -97,26 +122,26 @@ export default function Row4(props){
           />
         </Grid> 
         <Grid item xs={12} sm={6} md={8}>
-        <PerAccountTrend
-               key={accountOption}
-               title="Tren Belanja"
-               subheader={'Dalam Rupiah (Rp)'}
-               chart={{
-                 labels: xLabel,
-                 series: [
-                   {
-                     name: 'Realisasi Belanja (Rp)',
-                     type: 'area',
-                     fill: 'gradient',
-                     data: yLabel,
-                   },
-                 ],
-               }}
-               trend={accountOption}
-               changeTrend={handleChangeAccount}
-            /> 
+          <PerAccountTrend
+              key={accountOption}
+              title="Tren Belanja"
+              subheader={'Dalam Rupiah (Rp)'}
+              chart={{
+                labels: xLabel,
+                series: [
+                  {
+                    name: 'Realisasi Belanja (Rp)',
+                    type: 'area',
+                    fill: 'gradient',
+                    data: yLabel,
+                  },
+                ],
+              }}
+              trend={accountOption}
+              changeTrend={handleChangeAccount}
+              account={account}
+          /> 
         </Grid> 
-
     </>
   )
 }
@@ -182,18 +207,63 @@ async function orderAndSort(data, value){
 //   nmakun:String
 //   date:Date
 
-async function getLast30Day(spending, account){
-  
+async function getRange(spending, account, startDate, endDate){
   const output = spending.filter((item) => {
-    const today = new Date();
-    const todayMin30 = new Date(new Date().setDate(today.getDate()-29));
-    const endDate = today;
-    const itemDate = new Date(item.date);
-
-    return itemDate>=todayMin30 && itemDate<=endDate && item.akun===account
+    const itemDate = new Date(item.date)
+    return itemDate>=startDate && itemDate<=endDate && item.akun===account
   }).toSorted((a, b) => {
-    return a.date = b.date
+    return a.date - b.date
   })
 
   return output
 } 
+
+
+async function getXLabel(data){
+  const x = data.map((item) => {
+    const dateString = format(item.date, "MM/dd/yyyy");
+    return dateString
+  });
+
+  return x
+}
+
+async function getYLabel(data){
+  const y = data.map((item) => {return item.total});
+
+  return y
+}
+
+async function last30Day(){
+  const today = new Date();
+  const startDate = new Date(new Date().setDate(today.getDate()-29));
+  const endDate = today;
+
+  return {startDate, endDate}
+}
+
+async function lastMonth(){
+  const today = new Date();
+  const startDate = new Date(today.getFullYear(), 1, 1);
+  const endDate = new Date(today.getFullYear(), 1, 29);
+
+  return {startDate, endDate}
+}
+
+async function allYear(){
+  const today = new Date();
+  const startDate = new Date(today.getFullYear(), 0, 1);
+  const endDate = new Date(today.getFullYear(), 11, 31);
+
+  return{startDate, endDate}
+}
+
+async function getAllAccount(data){
+  const array = [];
+
+  data.map((item) => {
+    array.includes(item.akun) ? null : array.push(item.akun)
+  })
+
+  return array.toSorted()
+}

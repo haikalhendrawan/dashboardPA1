@@ -2,6 +2,7 @@ import {useState, useEffect, useContext} from "react";
 import {styled, alpha, useTheme} from "@mui/material/styles";
 import {Popover, Button, Box, Popper, Paper, Fade, ClickAwayListener, Typography} from "@mui/material";
 import Iconify from '../../../components/Iconify';
+import Scrollbar from "../../../components/Scrollbar";
 
 const style = {
   boxShadow:"0px 5px 5px -3px rgba(145, 158, 171, 0.2), 0px 8px 10px 1px rgba(145, 158, 171, 0.14), 0px 3px 14px 2px rgba(145, 158, 171, 0.12)",
@@ -42,7 +43,7 @@ export default function AccountSelectPopper(props) {
     >
         {({ TransitionProps }) => (
           <Fade {...TransitionProps} timeout={350}>
-            <Paper sx={style}>
+            <Paper sx={style} height={100}>
               <ClickAwayListener onClickAway={props.close}>
               <Box>
                 <StyledButton value={0} onClick={(e) => handleClick(e)} sx={value==0 && selectedSx}>

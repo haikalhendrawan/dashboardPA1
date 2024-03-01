@@ -1,9 +1,17 @@
 import { format } from "date-fns";
 
+/*
+*Utility function untuk ngubah data dari api
+*1. data dari api date dalam bentuk string -> convert ke date object
+*2. data dari api all year, di split dengan getRangedData function
+*/
+
+
 export async function parseAndSortDate (row){ // return seluruh row yang udah di sort descending 
   const allDate = row.map((item) => {
     const [day, month, year] = item.tanggal.split("/");
-    const date = new Date(year, month-1, day);
+    const date = new Date(`${year}-${month}-${day}`);
+    
     return {...item, date}
   });
   const sortedDesc = allDate?.sort((a, b) => b.date-a.date);
@@ -35,7 +43,6 @@ export async function getRangedData(data, startDate, endDate){
 }
 
 export async function getXLabel(data){
-
   if(!data){return false}
 
   let array = [];

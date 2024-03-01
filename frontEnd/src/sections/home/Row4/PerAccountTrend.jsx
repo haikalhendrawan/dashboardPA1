@@ -1,6 +1,6 @@
 import {useState} from "react";
 import ReactApexChart from 'react-apexcharts';
-import { Card, CardHeader, Box, Button} from '@mui/material';
+import { Card, CardHeader, Box, Button, Stack, Select, MenuItem, FormControl, InputLabel} from '@mui/material';
 import {styled, useTheme} from '@mui/material/styles';
 import Chart from '../../../components/Charts';
 import { useChart } from '../../../components/Charts';
@@ -20,10 +20,15 @@ const StyledButton = styled(Button)(({theme}) => ({
   }
 }));
 
+const StyledMenuItem = styled(MenuItem)(({theme}) => ({
+  typography:'body2',
+  fontSize:12
+}));
+
 const allValue = ['30 Day', 'This Month', "All Year"];
 // ---------------------------------------------------------------------------
 
-export default function PerAccountTrend({ title, subheader, chart, trend, changeTrend, ...other }) {
+export default function PerAccountTrend({ title, subheader, chart, trend, changeTrend, account, ...other }) {
   const { labels, colors, series, options } = chart;
   const [open, setOpen] = useState(null);
   const theme = useTheme();
@@ -38,6 +43,10 @@ export default function PerAccountTrend({ title, subheader, chart, trend, change
 
   const handleChange = (newValue) => {
     changeTrend(newValue);
+  };
+
+  const handleChange2 = (event) => {
+    setAge(event.target.value);
   };
 
   
@@ -102,15 +111,34 @@ export default function PerAccountTrend({ title, subheader, chart, trend, change
         title={title} 
         subheader={subheader} 
         action={
-          <StyledButton
-            aria-label="settings" 
-            variant='outlined'
-            endIcon={<Iconify icon="mdi:arrow-down-drop" />}
-            disableFocusRipple
-            onClick={handleClick}
-            >
-            {allValue[trend]}
-          </StyledButton>
+          <>
+          <Stack direction={'row'} spacing={1}>
+            <FormControl size="small" sx={{width:100}}>
+              <InputLabel id="select-account-label">Akun</InputLabel>
+              <Select
+                labelId="select-account-label"
+                id="select-account"
+                value={account}
+                label="Akun"
+                onChange={handleChange}
+                sx={{fontSize:12, borderRadius:'8px'}}
+                MenuProps={{PaperProps: { sx: { maxHeight: 350, borderRadius:'12px', fontSize:10 } }}}
+              >
+                <StyledMenuItem value={'511111'}>511111 - Belanja Barang</StyledMenuItem>
+              </Select>
+            </FormControl>
+
+            <StyledButton
+              aria-label="settings" 
+              variant='outlined'
+              endIcon={<Iconify icon="mdi:arrow-down-drop" />}
+              disableFocusRipple
+              onClick={handleClick}
+              >
+              {allValue[trend]}
+            </StyledButton>
+          </Stack>
+          </>
         }
       />
 
