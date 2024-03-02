@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import ReactApexChart from 'react-apexcharts';
 import { Card, CardHeader, Box, Button, Stack, Select, MenuItem, FormControl, InputLabel} from '@mui/material';
 import {styled, useTheme} from '@mui/material/styles';
@@ -28,10 +28,21 @@ const StyledMenuItem = styled(MenuItem)(({theme}) => ({
 const allValue = ['30 Day', 'This Month', "All Year"];
 // ---------------------------------------------------------------------------
 
-export default function PerAccountTrend({ title, subheader, chart, trend, changeTrend, account, ...other }) {
+export default function PerAccountTrend({ 
+  title, 
+  subheader, 
+  chart, 
+  trend, 
+  changeTrend, 
+  account, 
+  allAccount,
+  changeAccount, 
+  ...other 
+  }) {
   const { labels, colors, series, options } = chart;
   const [open, setOpen] = useState(null);
   const theme = useTheme();
+  const [isReady, setIsReady] = useState(false);
 
   const handleClick = (event) => {
     setOpen(event.currentTarget);
@@ -46,10 +57,9 @@ export default function PerAccountTrend({ title, subheader, chart, trend, change
   };
 
   const handleChange2 = (event) => {
-    setAge(event.target.value);
+    changeAccount(event.target.value);
   };
-
-  
+ 
   const chartOptions = useChart({
     chart: {id: `bar${Math.random()}`},
     plotOptions: {
@@ -104,6 +114,11 @@ export default function PerAccountTrend({ title, subheader, chart, trend, change
     ...options,
   });
 
+  useEffect(() => {
+    allAccount.length>130?setIsReady(true):setIsReady(false)
+  }, [allAccount])
+
+
   return (
     <>
     <Card {...other}>
@@ -113,6 +128,7 @@ export default function PerAccountTrend({ title, subheader, chart, trend, change
         action={
           <>
           <Stack direction={'row'} spacing={1}>
+            {allAccount.length>1 && (
             <FormControl size="small" sx={{width:100}}>
               <InputLabel id="select-account-label">Akun</InputLabel>
               <Select
@@ -120,13 +136,21 @@ export default function PerAccountTrend({ title, subheader, chart, trend, change
                 id="select-account"
                 value={account}
                 label="Akun"
-                onChange={handleChange}
+                onChange={handleChange2}
                 sx={{fontSize:12, borderRadius:'8px'}}
                 MenuProps={{PaperProps: { sx: { maxHeight: 350, borderRadius:'12px', fontSize:10 } }}}
               >
-                <StyledMenuItem value={'511111'}>511111 - Belanja Barang</StyledMenuItem>
+                {allAccount.map((row, index) =>(
+                  <StyledMenuItem 
+                    value={row.akun}
+                    key={index+1}
+                  >
+                    {`${row.akun} - ${row.nmakun}`}
+                  </StyledMenuItem> 
+                  ))}
               </Select>
             </FormControl>
+            )}
 
             <StyledButton
               aria-label="settings" 
