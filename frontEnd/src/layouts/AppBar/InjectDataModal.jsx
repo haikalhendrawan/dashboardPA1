@@ -212,6 +212,7 @@ export default function InjectDataModal(props) {
               </Grid>
 
               <LinearProgressWithLabel tooltip='file upload progress' value={loadProg} sx={{display:isCorrectfile?'flex':'none'}} />
+              <Typography variant='body2' sx={{fontSize:12}}> Last successful update {props?.history} </Typography>
             </Paper>
             </Scrollbar>
           </Box>

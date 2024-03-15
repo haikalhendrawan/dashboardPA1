@@ -1,8 +1,8 @@
 import {useState, useEffect} from "react";
+import axios from "axios"
 import ReactApexChart from 'react-apexcharts';
 import { Card, CardHeader, Box, Button, Grid, Backdrop} from '@mui/material';
 import {styled, useTheme, alpha} from '@mui/material/styles';
-import CircularProgress from '@mui/material/CircularProgress';
 import useDIPA from "../useDIPA";
 import NumbersCard from "./NumbersCard";
 import SpendingPerAccount from "./SpendingPerAccount";
@@ -31,7 +31,7 @@ export default function Row1(){
       const percent = allBudget & allSpending?(allSpending/allBudget*100).toFixed(2): null;
       setPercentRlsd(`${percent} %`);
 
-      const text = await getToday();
+      const text = await getLastHistory();
       setDateText(text)
 
       const year = new Date().getFullYear();
@@ -43,7 +43,6 @@ export default function Row1(){
     }
 
   }, [spending, budget]);
-
 
   return(
     <>
@@ -118,6 +117,12 @@ async function getToday(){
   const text = date + " " + month
 
   return text
+}
+
+async function getLastHistory(){
+  const result = await axios.get(`${import.meta.env.VITE_API_URL}/getLastUpdateHistory`);
+  const output = new Date(result.data[0].update_time)
+  return output.toLocaleString("id-ID", { month: 'short' }) + " " + output.getDate()
 }
 
 

@@ -1,6 +1,6 @@
 import { getSpending, getBudget, getRevenue, getSpendingPerAccountAndDate,
-          addSpending, addBudget, 
-          deleteSpending, deleteBudget } from "../model/dipa.js";
+          addSpending, addBudget, deleteSpending, deleteBudget } from "../model/dipa.js";
+import { addUpdateHistory } from "../model/history.js";
 import multer from "multer";
 import upload from "../config/multer.js";
 import {parseAndSortDate, filterAcc60, getXAndY} from "../utility/spendingUtil.js";
@@ -67,6 +67,7 @@ const addAllSpending = async(req, res) => {
     try{
       await deleteSpending();
       await addSpending(`C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/${req.file.filename}`);
+      await addUpdateHistory();
       return res.status(200).json({msg:'Data inserted to database'});
     }catch(err){
       return res.status(500).json({isError:true, msg:'Fail to insert data',err});

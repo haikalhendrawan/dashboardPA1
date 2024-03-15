@@ -1,4 +1,5 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
+import axios from "axios";
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -11,6 +12,7 @@ import ThemeSwitcher from './themeSwitcher';
 
 export default function AppBar() {
   const [modalOpen, setModalOpen] = useState(false);
+  const [updateHistory, setUpdateHistory] = useState(null);
 
   const handleClick = () => {
     setModalOpen(true);
@@ -19,6 +21,15 @@ export default function AppBar() {
   const modalClose = () => {
     setModalOpen(false);
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await axios.get(`${import.meta.env.VITE_API_URL}/getLastUpdateHistory`);
+      const output = new Date(result.data[0].update_time);
+      setUpdateHistory(output.getDate()+ " " + output.toLocaleString("id-ID", { month: 'short' }) +  " " + output.getFullYear());
+    }
+    fetchData();
+  }, []);
 
   return (
     <>
@@ -40,7 +51,7 @@ export default function AppBar() {
         </Toolbar>
     </Box>
 
-    <InjectDataModal open={modalOpen} close={modalClose} />
+    <InjectDataModal open={modalOpen} close={modalClose} history={updateHistory} />
     </>
   );
 }
